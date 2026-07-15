@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    text-align: center;
+}
+
+header {
+    background: #222;
+    padding: 20px;
+}
+
+h1 {
+    color: #00ff88;
+}
+
+#produtos {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.produto {
+    background: #222;
+    padding: 20px;
+    width: 200px;
+    border-radius: 10px;
+}button {
+    background: #00ff88;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: white;
+}
+
+.produto {
+    box-shadow: 0 0 15px #00ff88;
+}
