@@ -1,7 +1,7 @@
 const db = require("./database");
 
 db.run(`
-CREATE TABLE IF NOT EXISTS customers (
+CREATE TABLE IF NOT EXISTS suppliers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
     telefone TEXT,
@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS customers (
 )
 `, (err) => {
     if (err) {
-        console.log("Erro ao criar clientes:", err.message);
+        console.log("Erro ao criar fornecedores:", err.message);
     } else {
-        console.log("Tabela clientes criada com sucesso!");
+        console.log("Tabela fornecedores criada com sucesso!");
     }
 });

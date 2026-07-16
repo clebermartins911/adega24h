@@ -72,9 +72,8 @@ const id = req.params.id;
 
 // Cadastrar produto
 router.post("/", validarProduto, (req, res) => {
-    return res.json({
-        teste: "POST NOVO ESTA RODANDO"
-    });
+
+    
 console.log("ENTROU NO POST PRODUTO");
 console.log("BODY RECEBIDO:", req.body);
 
@@ -140,19 +139,13 @@ console.log("VAI INSERIR:", nome, preco, estoque, categoria_id);
 router.put("/:id", validarProduto, (req, res) => {
 
     const id = req.params.id;
-
-   const { nome, preco, estoque, categoria_id } = req.body;
-
-const sql = `
-    UPDATE products
-    SET nome = ?, preco = ?, estoque = ?, categoria_id = ?
-    WHERE id = ?
-`;
-
-db.run(
-    sql,
-    [nome, preco, estoque, categoria_id, id],
-        function(err) {
+    const { nome, preco, estoque, categoria } = req.body;
+    console.log("Categoria recebida:", categoria);
+console.log("Categoria recebida:", categoria);
+    db.get(
+        "SELECT id FROM categories WHERE nome = ?",
+        [categoria],
+        (err, row) => {
 
             if (err) {
                 return res.status(500).json({
@@ -160,15 +153,46 @@ db.run(
                 });
             }
 
-            if (this.changes === 0) {
-                return res.status(404).json({
-                    erro: "Produto não encontrado"
+            if (!row) {
+                return res.status(400).json({
+                    erro: "Categoria não encontrada"
                 });
             }
 
-            res.json({
-                mensagem: "Produto atualizado com sucesso!"
-            });
+            const categoria_id = row.id;
+            console.log("Row:", row);
+console.log("Categoria ID:", categoria_id);
+console.log("Categoria encontrada:", row);
+console.log("Categoria ID:", categoria_id);
+            const sql = `
+                UPDATE products
+                SET nome = ?, preco = ?, estoque = ?, categoria_id = ?
+                WHERE id = ?
+            `;
+console.log("Atualizando:", nome, preco, estoque, categoria_id, id);
+            db.run(
+                sql,
+                [nome, preco, estoque, categoria_id, id],
+                function(err) {
+
+                    if (err) {
+                        return res.status(500).json({
+                            erro: err.message
+                        });
+                    }
+
+                    if (this.changes === 0) {
+                        return res.status(404).json({
+                            erro: "Produto não encontrado"
+                        });
+                    }
+
+                    res.json({
+                        mensagem: "Produto atualizado com sucesso!"
+                    });
+
+                }
+            );
 
         }
     );
