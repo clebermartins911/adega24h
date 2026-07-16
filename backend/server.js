@@ -12,13 +12,13 @@ const productRoutes = require("./routes/products");
 console.log("ROTA PRODUTOS CARREGADA");
 const salesRoutes = require("./routes/sales");
 const categoryRoutes = require("./routes/categories");
-
-
+const stockRoutes = require("./routes/stock");
+console.log("ROTA ESTOQUE CARREGADA");
 // Usa as rotas
 app.use("/products", productRoutes);
 app.use("/sales", salesRoutes);
 app.use("/categories", categoryRoutes);
-
+app.use("/stock", stockRoutes);
 
 // Rota de status
 app.get("/status", (req, res) => {

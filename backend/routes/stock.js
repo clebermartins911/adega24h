@@ -1,7 +1,39 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database");
+router.post("/", (req, res) => {
 
+    console.log("POST STOCK RECEBIDO");
+    console.log(req.body);
+
+    const { produto_id, tipo, quantidade } = req.body;
+
+    if (!produto_id || !tipo || !quantidade) {
+        return res.status(400).json({
+            erro: "Informe produto_id, tipo e quantidade"
+        });
+    }
+
+    db.run(
+        `
+        INSERT INTO stock (produto_id, tipo, quantidade)
+        VALUES (?, ?, ?)
+        `,
+        [produto_id, tipo, quantidade],
+        function (err) {
+            if (err) {
+                return res.status(500).json({
+                    erro: err.message
+                });
+            }
+
+            res.json({
+                mensagem: "Movimentação de estoque registrada!",
+                id: this.lastID
+            });
+        }
+    );
+});
 console.log("stock.js carregado");
 
 
