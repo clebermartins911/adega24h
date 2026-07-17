@@ -10,27 +10,27 @@ const {
     valor_total
 } = dadosVenda;
 
-    // Validações iniciais
-    if (!produto_id) {
-        return callback({
-            erro: "Produto obrigatório"
-        });
-    }
+// Validações iniciais
+
+if (!produto_id) {
+    return callback({
+        erro: "Produto obrigatório"
+    });
+}
 
 
-    if (!quantidade || quantidade <= 0) {
-        return callback({
-            erro: "Quantidade inválida"
-        });
-    }
+if (!quantidade || quantidade <= 0) {
+    return callback({
+        erro: "Quantidade inválida"
+    });
+}
 
 
-  if (!valor_total || valor_total <= 0)
-        return callback({
-            erro: "Valor total inválido"
-        });
-    }
-
+if (!valor_total || valor_total <= 0) {
+    return callback({
+        erro: "Valor total inválido"
+    });
+}
 
     // Envia para o model salvar no banco
     saleModel.criarVenda(
