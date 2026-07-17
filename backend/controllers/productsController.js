@@ -1,6 +1,5 @@
 const productsService = require("../services/productsService");
 
-
 // Criar produto
 function criarProduto(req, res) {
 
@@ -12,7 +11,6 @@ function criarProduto(req, res) {
                 return res.status(400).json(err);
             }
 
-
             res.status(201).json({
                 mensagem: "Produto cadastrado com sucesso!",
                 produto: resultado
@@ -22,7 +20,6 @@ function criarProduto(req, res) {
     );
 
 }
-
 
 // Listar produtos
 function listarProdutos(req, res) {
@@ -35,7 +32,6 @@ function listarProdutos(req, res) {
                     erro: err.message
                 });
             }
-
 
             res.json(produtos);
 
@@ -66,6 +62,9 @@ function buscarPorId(req, res) {
         res.json(produto);
 
     });
+
+}
+
 // Atualizar produto
 function atualizarProduto(req, res) {
 
@@ -80,13 +79,11 @@ function atualizarProduto(req, res) {
                 return res.status(400).json(err);
             }
 
-
             if (resultado.alterados === 0) {
                 return res.status(404).json({
                     erro: "Produto não encontrado"
                 });
             }
-
 
             res.json({
                 mensagem: "Produto atualizado com sucesso!"
@@ -94,6 +91,9 @@ function atualizarProduto(req, res) {
 
         }
     );
+
+}
+
 // Excluir produto
 function excluirProduto(req, res) {
 
@@ -109,13 +109,11 @@ function excluirProduto(req, res) {
                 });
             }
 
-
             if (resultado.removidos === 0) {
                 return res.status(404).json({
                     erro: "Produto não encontrado"
                 });
             }
-
 
             res.json({
                 mensagem: "Produto removido com sucesso!"
@@ -125,8 +123,7 @@ function excluirProduto(req, res) {
     );
 
 }
-}
-}
+
 module.exports = {
     criarProduto,
     listarProdutos,

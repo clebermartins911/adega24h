@@ -126,7 +126,12 @@ function atualizarProduto(id, dadosProduto, callback) {
     });
 
 }
+// Buscar produto por ID
+function buscarPorId(id, callback) {
 
+    productModel.buscarPorId(id, callback);
+
+}
 module.exports = {
     criarProduto,
     listarProdutos,

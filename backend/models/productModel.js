@@ -94,6 +94,8 @@ function buscarPorId(id, callback) {
 
         }
     );
+
+    }
 // Buscar categoria pelo nome
 function buscarCategoriaId(nomeCategoria, callback) {
 
@@ -114,6 +116,8 @@ function buscarCategoriaId(nomeCategoria, callback) {
 
         }
     );
+
+      }
 // Atualizar produto
 function atualizarProduto(id, produto, callback) {
 
@@ -150,6 +154,8 @@ function atualizarProduto(id, produto, callback) {
 
         }
     );
+
+    }
 // Excluir produto
 function excluirProduto(id, callback) {
 

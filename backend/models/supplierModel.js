@@ -1,27 +1,25 @@
 const db = require("../database");
 
-// Criar uma venda
-function criarVenda(venda, callback) {
+
+// Criar fornecedor
+function criarFornecedor(fornecedor, callback) {
 
     const {
-        cliente_id,
-        produto_id,
-        quantidade,
-        valor_total
-    } = venda;
-
+        nome,
+        telefone,
+        email
+    } = fornecedor;
 
     db.run(
         `
-        INSERT INTO sales
-        (cliente_id, produto_id, quantidade, valor_total)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO suppliers
+        (nome, telefone, email)
+        VALUES (?, ?, ?)
         `,
         [
-            cliente_id,
-            produto_id,
-            quantidade,
-            valor_total
+            nome,
+            telefone,
+            email
         ],
         function(err) {
 
@@ -38,11 +36,12 @@ function criarVenda(venda, callback) {
 
 }
 
-// Listar vendas
-function listarVendas(callback) {
+
+// Listar fornecedores
+function listarFornecedores(callback) {
 
     db.all(
-        "SELECT * FROM sales",
+        "SELECT * FROM suppliers",
         [],
         (err, rows) => {
 
@@ -56,7 +55,9 @@ function listarVendas(callback) {
     );
 
 }
+
+
 module.exports = {
-    criarVenda,
-    listarVendas
-}; 
+    criarFornecedor,
+    listarFornecedores
+};
