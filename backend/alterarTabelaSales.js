@@ -6,7 +6,6 @@ db.run(
     ADD COLUMN cliente_id INTEGER
     `,
     (err) => {
-
         if (err) {
             console.log("Erro ao alterar tabela:", err.message);
             return;

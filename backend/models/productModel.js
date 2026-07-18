@@ -1,16 +1,8 @@
 const db = require("../database");
 
-
 // Criar produto
 function criarProduto(produto, callback) {
-
-    const {
-        nome,
-        preco,
-        estoque,
-        categoria_id
-    } = produto;
-
+    const { nome, preco, estoque, categoria_id } = produto;
 
     db.run(
         `
@@ -18,30 +10,21 @@ function criarProduto(produto, callback) {
         (nome, preco, estoque, categoria_id)
         VALUES (?, ?, ?, ?)
         `,
-        [
-            nome,
-            preco,
-            estoque,
-            categoria_id
-        ],
-        function(err) {
-
+        [nome, preco, estoque, categoria_id],
+        function (err) {
             if (err) {
                 return callback(err);
             }
 
             callback(null, {
-                id: this.lastID
+                id: this.lastID,
             });
-
         }
     );
-
 }
 
 // Listar produtos
 function listarProdutos(callback) {
-
     db.all(
         `
         SELECT
@@ -56,20 +39,16 @@ function listarProdutos(callback) {
         `,
         [],
         (err, rows) => {
-
             if (err) {
                 return callback(err);
             }
 
             callback(null, rows);
-
         }
     );
-
 }
 // Buscar produto por ID
 function buscarPorId(id, callback) {
-
     db.get(
         `
         SELECT
@@ -85,49 +64,31 @@ function buscarPorId(id, callback) {
         `,
         [id],
         (err, row) => {
-
             if (err) {
                 return callback(err);
             }
 
             callback(null, row);
-
         }
     );
-
-    }
+}
 // Buscar categoria pelo nome
 function buscarCategoriaId(nomeCategoria, callback) {
-
-    db.get(
-        "SELECT id FROM categories WHERE nome = ?",
-        [nomeCategoria],
-        (err, row) => {
-
-            if (err) {
-                return callback(err);
-            }
-
-            if (!row) {
-                return callback(null, null);
-            }
-
-            callback(null, row.id);
-
+    db.get("SELECT id FROM categories WHERE nome = ?", [nomeCategoria], (err, row) => {
+        if (err) {
+            return callback(err);
         }
-    );
 
-      }
+        if (!row) {
+            return callback(null, null);
+        }
+
+        callback(null, row.id);
+    });
+}
 // Atualizar produto
 function atualizarProduto(id, produto, callback) {
-
-    const {
-        nome,
-        preco,
-        estoque,
-        categoria_id
-    } = produto;
-
+    const { nome, preco, estoque, categoria_id } = produto;
 
     db.run(
         `
@@ -135,48 +96,29 @@ function atualizarProduto(id, produto, callback) {
         SET nome = ?, preco = ?, estoque = ?, categoria_id = ?
         WHERE id = ?
         `,
-        [
-            nome,
-            preco,
-            estoque,
-            categoria_id,
-            id
-        ],
-        function(err) {
-
+        [nome, preco, estoque, categoria_id, id],
+        function (err) {
             if (err) {
                 return callback(err);
             }
 
             callback(null, {
-                alterados: this.changes
+                alterados: this.changes,
             });
-
         }
     );
-
-    }
+}
 // Excluir produto
 function excluirProduto(id, callback) {
-
-    db.run(
-        "DELETE FROM products WHERE id = ?",
-        [id],
-        function(err) {
-
-            if (err) {
-                return callback(err);
-            }
-
-            callback(null, {
-                removidos: this.changes
-            });
-
+    db.run("DELETE FROM products WHERE id = ?", [id], function (err) {
+        if (err) {
+            return callback(err);
         }
-    );
 
-
-
+        callback(null, {
+            removidos: this.changes,
+        });
+    });
 }
 
 module.exports = {
@@ -185,5 +127,5 @@ module.exports = {
     buscarPorId,
     buscarCategoriaId,
     atualizarProduto,
-    excluirProduto
+    excluirProduto,
 };

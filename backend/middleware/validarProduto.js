@@ -1,29 +1,28 @@
 function validarProduto(req, res, next) {
-
-const { nome, preco, estoque, categoria } = req.body;   
+    const { nome, preco, estoque, categoria } = req.body;
 
     if (!nome) {
         return res.status(400).json({
-            erro: "Nome do produto é obrigatório"
+            erro: "Nome do produto é obrigatório",
         });
     }
 
     if (preco === undefined || preco <= 0) {
         return res.status(400).json({
-            erro: "Preço deve ser maior que zero"
+            erro: "Preço deve ser maior que zero",
         });
     }
 
     if (estoque === undefined || estoque < 0) {
         return res.status(400).json({
-            erro: "Estoque inválido"
+            erro: "Estoque inválido",
         });
     }
-if (!categoria) {
-    return res.status(400).json({
-        erro: "Categoria é obrigatória"
-    });
-}
+    if (!categoria) {
+        return res.status(400).json({
+            erro: "Categoria é obrigatória",
+        });
+    }
     next();
 }
 

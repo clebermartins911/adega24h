@@ -1,29 +1,27 @@
 const db = require("./database");
 
-
-
 // Criar tabela de produtos
-db.run(`
+db.run(
+    `
 CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
     preco REAL NOT NULL,
     estoque INTEGER NOT NULL
 )
-`, (err) => {
-
-    if (err) {
-        console.log("Erro ao criar tabela products:", err.message);
-    } else {
-        console.log("Tabela products criada com sucesso!");
+`,
+    (err) => {
+        if (err) {
+            console.log("Erro ao criar tabela products:", err.message);
+        } else {
+            console.log("Tabela products criada com sucesso!");
+        }
     }
-
-});
-
-
+);
 
 // Criar tabela de vendas
-db.run(`
+db.run(
+    `
 CREATE TABLE IF NOT EXISTS sales (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,12 +35,12 @@ CREATE TABLE IF NOT EXISTS sales (
     data_venda TEXT NOT NULL
 
 )
-`, (err) => {
-
-    if (err) {
-        console.log("Erro ao criar tabela sales:", err.message);
-    } else {
-        console.log("Tabela sales criada com sucesso!");
+`,
+    (err) => {
+        if (err) {
+            console.log("Erro ao criar tabela sales:", err.message);
+        } else {
+            console.log("Tabela sales criada com sucesso!");
+        }
     }
-
-});
+);

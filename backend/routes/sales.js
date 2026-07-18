@@ -5,11 +5,8 @@ const salesController = require("../controllers/salesController");
 
 console.log("sales.js usando controller");
 
-
 router.post("/", salesController.criarVenda);
 
-
 router.get("/", salesController.listarVendas);
-
 
 module.exports = router;

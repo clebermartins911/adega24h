@@ -17,5 +17,4 @@ router.put("/entrada/:id", stockController.entradaEstoque);
 // Saída de estoque
 router.put("/saida/:id", stockController.saidaEstoque);
 
-
 module.exports = router;

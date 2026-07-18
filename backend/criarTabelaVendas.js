@@ -1,6 +1,7 @@
 const db = require("./database");
 
-db.run(`
+db.run(
+    `
 CREATE TABLE IF NOT EXISTS sales (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cliente_id INTEGER,
@@ -9,10 +10,12 @@ CREATE TABLE IF NOT EXISTS sales (
     total REAL NOT NULL,
     data DATETIME DEFAULT CURRENT_TIMESTAMP
 )
-`, (err) => {
-    if (err) {
-        console.log("Erro ao criar vendas:", err.message);
-    } else {
-        console.log("Tabela vendas criada com sucesso!");
+`,
+    (err) => {
+        if (err) {
+            console.log("Erro ao criar vendas:", err.message);
+        } else {
+            console.log("Tabela vendas criada com sucesso!");
+        }
     }
-});
+);
