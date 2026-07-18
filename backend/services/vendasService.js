@@ -1,106 +1,93 @@
 const saleModel = require("../models/saleModel");
 const stockModel = require("../models/stockModel");
 
-
 // Criar uma venda com regras do negócio
 function criarVenda(dadosVenda, callback) {
-const {
-    cliente_id,
-    produto_id,
-    quantidade,
-    valor_total
-} = dadosVenda;
+    const { cliente_id, produto_id, quantidade } = dadosVenda;
 
-// Validações iniciais
+    // Validações iniciais
 
-if (!produto_id) {
-    return callback({
-        erro: "Produto obrigatório"
-    });
-}
+    if (!produto_id) {
+        return callback({
+            erro: "Produto obrigatório",
+        });
+    }
 
+    if (!quantidade || quantidade <= 0) {
+        return callback({
+            erro: "Quantidade inválida",
+        });
+    }
 
-if (!quantidade || quantidade <= 0) {
-    return callback({
-        erro: "Quantidade inválida"
-    });
-}
+    // Verificar estoque antes da venda
 
-
-if (!valor_total || valor_total <= 0) {
-    return callback({
-        erro: "Valor total inválido"
-    });
-}
-
-// Verificar estoque antes da venda
-stockModel.buscarPorId(
-    produto_id,
-    (err, produto) => {
-
+    stockModel.buscarPorId(produto_id, (err, produto) => {
         if (err) {
             return callback(err);
         }
 
-
         if (!produto) {
             return callback({
-                erro: "Produto não encontrado"
+                erro: "Produto não encontrado",
             });
         }
-
 
         if (produto.estoque < quantidade) {
             return callback({
-                erro: "Estoque insuficiente"
+                erro: "Estoque insuficiente",
             });
         }
 
+        const valor_total = produto.preco * quantidade;
 
-        // Baixar estoque
-        stockModel.saidaEstoque(
+        console.log("DADOS DA VENDA:", {
+            cliente_id,
             produto_id,
             quantidade,
-            (err, resultado) => {
+            preco: produto.preco,
+            valor_total,
+        });
 
-                if (err) {
-                    return callback(err);
-                }
+        // Baixar estoque
 
+        stockModel.saidaEstoque(produto_id, quantidade, (err, resultado) => {
+            console.log("ENTROU NA BAIXA DE ESTOQUE");
 
-                if (resultado.alterados === 0) {
-                    return callback({
-                        erro: "Não foi possível atualizar estoque"
-                    });
-                }
-
-
-                // Salvar venda
-                saleModel.criarVenda(
-                    {
-                        cliente_id,
-                        produto_id,
-                        quantidade,
-                        valor_total
-                    },
-                    callback
-                );
-
+            if (err) {
+                console.log("ERRO ESTOQUE:", err);
+                return callback(err);
             }
-        );
 
-    }
-);
-}  
-// Buscar vendas
-function listarVendas(callback) {
+            if (resultado.alterados === 0) {
+                return callback({
+                    erro: "Não foi possível atualizar estoque",
+                });
+            }
 
-    saleModel.listarVendas(callback);
+            console.log("ESTOQUE ATUALIZADO COM SUCESSO");
 
+            // Salvar venda
+
+            saleModel.criarVenda(
+                {
+                    cliente_id,
+                    produto_id,
+                    quantidade,
+                    valor_total,
+                },
+                callback
+            );
+        });
+    });
 }
 
+// Buscar vendas
+
+function listarVendas(callback) {
+    saleModel.listarVendas(callback);
+}
 
 module.exports = {
     criarVenda,
-    listarVendas
+    listarVendas,
 };
