@@ -57,6 +57,9 @@ function buscarPorId(req, res) {
 function atualizarProduto(req, res) {
     const id = req.params.id;
 
+    console.log("PUT CHAMADO ID:", id);
+    console.log("BODY RECEBIDO:", req.body);
+
     productsService.atualizarProduto(id, req.body, (err, resultado) => {
         if (err) {
             return res.status(400).json(err);
