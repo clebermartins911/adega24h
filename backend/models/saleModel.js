@@ -1,5 +1,6 @@
 const db = require("../database");
 
+
 // Criar uma venda
 function criarVenda(venda, callback) {
 
@@ -14,8 +15,8 @@ function criarVenda(venda, callback) {
     db.run(
         `
         INSERT INTO sales
-        (cliente_id, produto_id, quantidade, valor_total)
-        VALUES (?, ?, ?, ?)
+        (cliente_id, produto_id, quantidade, valor_total, data_venda)
+        VALUES (?, ?, ?, ?, datetime('now'))
         `,
         [
             cliente_id,
@@ -26,8 +27,10 @@ function criarVenda(venda, callback) {
         function(err) {
 
             if (err) {
+                console.log("ERRO SQL VENDA:", err.message);
                 return callback(err);
             }
+
 
             callback(null, {
                 id: this.lastID
@@ -37,6 +40,7 @@ function criarVenda(venda, callback) {
     );
 
 }
+
 
 // Listar vendas
 function listarVendas(callback) {
@@ -50,13 +54,16 @@ function listarVendas(callback) {
                 return callback(err);
             }
 
+
             callback(null, rows);
 
         }
     );
 
 }
+
+
 module.exports = {
     criarVenda,
     listarVendas
-}; 
+};

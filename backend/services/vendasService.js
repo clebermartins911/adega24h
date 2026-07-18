@@ -1,4 +1,5 @@
 const saleModel = require("../models/saleModel");
+const stockModel = require("../models/stockModel");
 
 
 // Criar uma venda com regras do negócio
@@ -32,20 +33,65 @@ if (!valor_total || valor_total <= 0) {
     });
 }
 
-    // Envia para o model salvar no banco
-    saleModel.criarVenda(
-        {
-            cliente_id,
+// Verificar estoque antes da venda
+stockModel.buscarPorId(
+    produto_id,
+    (err, produto) => {
+
+        if (err) {
+            return callback(err);
+        }
+
+
+        if (!produto) {
+            return callback({
+                erro: "Produto não encontrado"
+            });
+        }
+
+
+        if (produto.estoque < quantidade) {
+            return callback({
+                erro: "Estoque insuficiente"
+            });
+        }
+
+
+        // Baixar estoque
+        stockModel.saidaEstoque(
             produto_id,
             quantidade,
-           valor_total
-        },
-        callback
-    );
+            (err, resultado) => {
 
-}
+                if (err) {
+                    return callback(err);
+                }
 
 
+                if (resultado.alterados === 0) {
+                    return callback({
+                        erro: "Não foi possível atualizar estoque"
+                    });
+                }
+
+
+                // Salvar venda
+                saleModel.criarVenda(
+                    {
+                        cliente_id,
+                        produto_id,
+                        quantidade,
+                        valor_total
+                    },
+                    callback
+                );
+
+            }
+        );
+
+    }
+);
+}  
 // Buscar vendas
 function listarVendas(callback) {
 
