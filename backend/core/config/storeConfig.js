@@ -1,6 +1,6 @@
 module.exports = {
     // Dados do comércio
-    nomeComercio: "Adega do Cliente",
+    nomeComercio: "Novo Comércio",
     nomeFantasia: "",
     cnpj: "",
     razaoSocial: "",

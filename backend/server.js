@@ -21,6 +21,7 @@ const customerRoutes = require("./routes/customers");
 const supplierRoutes = require("./routes/suppliers");
 const editionRoutes = require("./routes/edition");
 const autoRoutes = require("./routes/auto");
+const alertRoutes = require("./routes/alerts");
 const storeConfig = require("./core/config/storeConfig");
 // ===============================
 // REGISTRO DAS ROTAS
@@ -34,6 +35,7 @@ app.use("/customers", customerRoutes);
 app.use("/suppliers", supplierRoutes);
 app.use("/edition", editionRoutes);
 app.use("/auto", autoRoutes);
+app.use("/alerts", alertRoutes);
 
 console.log(
     "EDITION ROTAS:",
