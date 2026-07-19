@@ -19,7 +19,8 @@ const categoryRoutes = require("./routes/categories");
 const stockRoutes = require("./routes/stock");
 const customerRoutes = require("./routes/customers");
 const supplierRoutes = require("./routes/suppliers");
-
+const editionRoutes = require("./routes/edition");
+const autoRoutes = require("./routes/auto");
 // ===============================
 // REGISTRO DAS ROTAS
 // ===============================
@@ -30,7 +31,17 @@ app.use("/categories", categoryRoutes);
 app.use("/stock", stockRoutes);
 app.use("/customers", customerRoutes);
 app.use("/suppliers", supplierRoutes);
+app.use("/edition", editionRoutes);
+app.use("/auto", autoRoutes);
 
+console.log(
+    "EDITION ROTAS:",
+    editionRoutes.stack.map((r) => r.route.path)
+);
+console.log(
+    "AUTO ROTAS:",
+    autoRoutes.stack.map((r) => r.route.path)
+);
 // ===============================
 // ROTAS DO SISTEMA
 // ===============================
