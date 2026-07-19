@@ -21,6 +21,7 @@ const customerRoutes = require("./routes/customers");
 const supplierRoutes = require("./routes/suppliers");
 const editionRoutes = require("./routes/edition");
 const autoRoutes = require("./routes/auto");
+const storeConfig = require("./core/config/storeConfig");
 // ===============================
 // REGISTRO DAS ROTAS
 // ===============================
@@ -48,10 +49,11 @@ console.log(
 
 app.get("/status", (req, res) => {
     const config = getActiveModules();
-    console.log("STATUS CONFIG:", config);
+
     res.json({
         sistema: systemConfig.systemName,
-        versao: systemConfig.version,
+        comercio: storeConfig.nomeComercio,
+        cnpj: storeConfig.cnpj,
         edicao: config.edition,
         status: "Online",
         modulos: config.modules,
