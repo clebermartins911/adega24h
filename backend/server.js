@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 
 const systemConfig = require("./core/config/systemConfig");
+const storeConfig = require("./core/config/storeConfig");
+const businessConfig = require("./core/config/businessConfig");
 const { getActiveModules } = require("./core/utils/moduleLoader");
 
 const app = express();
@@ -22,7 +24,7 @@ const supplierRoutes = require("./routes/suppliers");
 const editionRoutes = require("./routes/edition");
 const autoRoutes = require("./routes/auto");
 const alertRoutes = require("./routes/alerts");
-const storeConfig = require("./core/config/storeConfig");
+
 // ===============================
 // REGISTRO DAS ROTAS
 // ===============================
@@ -41,10 +43,12 @@ console.log(
     "EDITION ROTAS:",
     editionRoutes.stack.map((r) => r.route.path)
 );
+
 console.log(
     "AUTO ROTAS:",
     autoRoutes.stack.map((r) => r.route.path)
 );
+
 // ===============================
 // ROTAS DO SISTEMA
 // ===============================
@@ -54,11 +58,19 @@ app.get("/status", (req, res) => {
 
     res.json({
         sistema: systemConfig.systemName,
+
         comercio: storeConfig.nomeComercio,
+
+        tipo_comercio: businessConfig.tipoComercio,
+
         cnpj: storeConfig.cnpj,
+
         edicao: config.edition,
+
         status: "Online",
+
         modulos: config.modules,
+
         features: config.features,
     });
 });
@@ -72,6 +84,7 @@ app.get("/teste", (req, res) => {
 app.get("/debug", (req, res) => {
     res.json({
         customers: "OK",
+
         suppliers: "OK",
     });
 });
@@ -86,11 +99,18 @@ app.listen(PORT, () => {
     const config = getActiveModules();
 
     console.log("");
+
     console.log("======================================");
+
     console.log(`Sistema : ${systemConfig.systemName}`);
+
     console.log(`Versão  : ${systemConfig.version}`);
+
     console.log(`Edição  : ${config.edition}`);
+
     console.log("======================================");
+
     console.log(`Servidor rodando em http://localhost:${PORT}`);
+
     console.log("======================================");
 });
