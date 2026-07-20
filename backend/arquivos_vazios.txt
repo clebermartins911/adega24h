@@ -1,0 +1,157 @@
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          20/07/2026    17:27              0 arquivos_vazios
+                                                  .txt
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\backup_codigo\services
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          16/07/2026    17:51              0 financeiroServi
+                                                  ce.js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\core\utils
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 helpers.js
+-a---          19/07/2026    10:35              0 logger.js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\core\validators
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 customerValidat
+                                                  or.js
+-a---          19/07/2026    10:35              0 productValidato
+                                                  r.js
+-a---          19/07/2026    10:35              0 saleValidator.j
+                                                  s
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\docs
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 API.md
+-a---          19/07/2026    10:35              0 DATABASE.md
+-a---          19/07/2026    10:35              0 README.md
+-a---          19/07/2026    10:35              0 ROADMAP.md
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\integrations\barcode
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 barcodeService.
+                                                  js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\integrations\cameras
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 cameraService.j
+                                                  s
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\integrations\email
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 emailService.js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\integrations\locks
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 lockService.js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\integrations\pix
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 pixService.js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\integrations\printers
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 printerService.
+                                                  js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\integrations\whatsapp
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19/07/2026    10:35              0 whatsappService
+                                                  .js
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\napi-build-utils
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 index.md
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\node-addon-api
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 nothing.c
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\node-gyp\gyp\pylib\gyp\generator
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 __init__.py
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\node-gyp\gyp\pylib\packaging
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 py.typed
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\tar-fs\test\fixtures\d
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 file1
+-a---          18/07/2026    00:41              0 file2
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\tar-fs\test\fixtures\d\sub-dir
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 file5
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\tar-fs\test\fixtures\d\sub-files
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 file3
+-a---          18/07/2026    00:41              0 file4
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\tar-fs\test\fixtures\e
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 file
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\tar-fs\test\fixtures\e\directory
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 .ignore
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\node_modules\undici\lib\llhttp
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          18/07/2026    00:41              0 .gitkeep
+
+    Directory: C:\Users\clebe\Documents\Adega24hSystem\backend\services
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          16/07/2026    17:51              0 financeiroServi
+                                                  ce.js
+

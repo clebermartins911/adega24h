@@ -2,15 +2,23 @@ const db = require("../database");
 
 // Criar produto
 function criarProduto(produto, callback) {
-    const { nome, preco, estoque, categoria_id } = produto;
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id } = produto;
 
     db.run(
         `
         INSERT INTO products
-        (nome, preco, estoque, categoria_id)
-        VALUES (?, ?, ?, ?)
+        (
+            nome,
+            obs,
+            preco,
+            custo,
+            estoque,
+            estoque_minimo,
+            categoria_id
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         `,
-        [nome, preco, estoque, categoria_id],
+        [nome, obs, preco, custo, estoque, estoque_minimo, categoria_id],
         function (err) {
             if (err) {
                 return callback(err);
@@ -30,73 +38,78 @@ function listarProdutos(callback) {
         SELECT
             products.id,
             products.nome,
+            products.obs,
             products.preco,
+            products.custo,
             products.estoque,
+            products.estoque_minimo,
             categories.nome AS categoria
+
         FROM products
+
         LEFT JOIN categories
-            ON products.categoria_id = categories.id
+        ON products.categoria_id = categories.id
+
+        ORDER BY products.nome
         `,
         [],
-        (err, rows) => {
-            if (err) {
-                return callback(err);
-            }
-
-            callback(null, rows);
-        }
+        callback
     );
 }
-// Buscar produto por ID
+
+// Buscar por ID
 function buscarPorId(id, callback) {
     db.get(
         `
-        SELECT
-            products.id,
-            products.nome,
-            products.preco,
-            products.estoque,
-            categories.nome AS categoria
+        SELECT *
         FROM products
-        LEFT JOIN categories
-            ON products.categoria_id = categories.id
-        WHERE products.id = ?
+        WHERE id = ?
         `,
         [id],
+        callback
+    );
+}
+
+// Buscar categoria
+function buscarCategoriaId(nome, callback) {
+    db.get(
+        `
+        SELECT id
+        FROM categories
+        WHERE nome = ?
+        `,
+        [nome],
         (err, row) => {
             if (err) {
                 return callback(err);
             }
 
-            callback(null, row);
+            callback(null, row ? row.id : null);
         }
     );
 }
-// Buscar categoria pelo nome
-function buscarCategoriaId(nomeCategoria, callback) {
-    db.get("SELECT id FROM categories WHERE nome = ?", [nomeCategoria], (err, row) => {
-        if (err) {
-            return callback(err);
-        }
 
-        if (!row) {
-            return callback(null, null);
-        }
-
-        callback(null, row.id);
-    });
-}
 // Atualizar produto
 function atualizarProduto(id, produto, callback) {
-    const { nome, preco, estoque, categoria_id } = produto;
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id } = produto;
 
     db.run(
         `
         UPDATE products
-        SET nome = ?, preco = ?, estoque = ?, categoria_id = ?
-        WHERE id = ?
+
+        SET
+        nome=?,
+        obs=?,
+        preco=?,
+        custo=?,
+        estoque=?,
+        estoque_minimo=?,
+        categoria_id=?
+
+        WHERE id=?
         `,
-        [nome, preco, estoque, categoria_id, id],
+        [nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, id],
+
         function (err) {
             if (err) {
                 return callback(err);
@@ -108,17 +121,26 @@ function atualizarProduto(id, produto, callback) {
         }
     );
 }
+
 // Excluir produto
 function excluirProduto(id, callback) {
-    db.run("DELETE FROM products WHERE id = ?", [id], function (err) {
-        if (err) {
-            return callback(err);
-        }
+    db.run(
+        `
+        DELETE FROM products
+        WHERE id=?
+        `,
+        [id],
 
-        callback(null, {
-            removidos: this.changes,
-        });
-    });
+        function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, {
+                removidos: this.changes,
+            });
+        }
+    );
 }
 
 module.exports = {

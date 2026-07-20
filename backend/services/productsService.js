@@ -1,7 +1,8 @@
 const productModel = require("../models/productModel");
+
 // Criar produto
 function criarProduto(dadosProduto, callback) {
-    const { nome, preco, custo, estoque, estoque_minimo, categoria_id } = dadosProduto;
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id } = dadosProduto;
 
     if (!nome) {
         return callback({
@@ -23,29 +24,46 @@ function criarProduto(dadosProduto, callback) {
 
     if (!categoria_id) {
         return callback({
-            erro: "Categoria não encontrada",
+            erro: "Categoria é obrigatória",
         });
     }
 
-    productModel.criarProduto(
-        {
-            nome,
-            preco,
-            custo,
-            estoque,
-            estoque_minimo,
-            categoria_id,
-        },
-        callback
-    );
+    // Confirma se categoria existe pelo ID
+    productModel.buscarCategoriaPorId(categoria_id, (err, categoria) => {
+        if (err) {
+            return callback(err);
+        }
+
+        if (!categoria) {
+            return callback({
+                erro: "Categoria não encontrada",
+            });
+        }
+
+        productModel.criarProduto(
+            {
+                nome,
+                obs,
+                preco,
+                custo,
+                estoque,
+                estoque_minimo,
+                categoria_id,
+            },
+            callback
+        );
+    });
 }
+
 // Listar produtos
 function listarProdutos(callback) {
     productModel.listarProdutos(callback);
 }
+
 // Atualizar produto
 function atualizarProduto(id, dadosProduto, callback) {
-    const { nome, preco, custo, estoque, estoque_minimo, categoria } = dadosProduto;
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria, categoria_id } =
+        dadosProduto;
 
     if (!nome) {
         return callback({
@@ -65,12 +83,30 @@ function atualizarProduto(id, dadosProduto, callback) {
         });
     }
 
-    productModel.buscarCategoriaId(categoria, (err, categoria_id) => {
+    // aceita categoria_id direto ou busca pelo nome da categoria
+
+    if (categoria_id) {
+        return productModel.atualizarProduto(
+            id,
+            {
+                nome,
+                obs,
+                preco,
+                custo,
+                estoque,
+                estoque_minimo,
+                categoria_id,
+            },
+            callback
+        );
+    }
+
+    productModel.buscarCategoriaId(categoria, (err, categoria_idEncontrada) => {
         if (err) {
             return callback(err);
         }
 
-        if (!categoria_id) {
+        if (!categoria_idEncontrada) {
             return callback({
                 erro: "Categoria não encontrada",
             });
@@ -80,20 +116,24 @@ function atualizarProduto(id, dadosProduto, callback) {
             id,
             {
                 nome,
+                obs,
                 preco,
                 custo,
                 estoque,
                 estoque_minimo,
-                categoria_id,
+                categoria_id: categoria_idEncontrada,
             },
             callback
         );
     });
 }
+
 // Buscar produto por ID
 function buscarPorId(id, callback) {
     productModel.buscarPorId(id, callback);
 }
+
+// Excluir produto
 function excluirProduto(id, callback) {
     productModel.excluirProduto(id, callback);
 }
@@ -101,6 +141,7 @@ module.exports = {
     criarProduto,
     listarProdutos,
     buscarPorId,
+
     atualizarProduto,
     excluirProduto,
 };

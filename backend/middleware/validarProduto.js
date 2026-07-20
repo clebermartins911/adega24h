@@ -1,5 +1,8 @@
+console.log("VALIDAR PRODUTO NOVO CARREGADO");
 function validarProduto(req, res, next) {
-    const { nome, preco, estoque, categoria } = req.body;
+    console.log("BODY RECEBIDO NO MIDDLEWARE:", req.body);
+
+    const { nome, preco, estoque, categoria, categoria_id } = req.body;
 
     if (!nome) {
         return res.status(400).json({
@@ -18,11 +21,16 @@ function validarProduto(req, res, next) {
             erro: "Estoque inválido",
         });
     }
-    if (!categoria) {
+
+    // Aceita categoria_id (padrão do banco)
+    // ou categoria (compatibilidade antiga)
+
+    if (!categoria_id && !categoria) {
         return res.status(400).json({
             erro: "Categoria é obrigatória",
         });
     }
+
     next();
 }
 

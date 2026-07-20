@@ -1,10 +1,5 @@
 const productsService = require("../services/productsService");
 
-Object.freeze(productsService);
-
-console.log("SERVICE CONGELADO:", Object.keys(productsService));
-console.log("SERVICE CARREGADO:", productsService);
-console.log("TIPO DELETE:", typeof productsService.excluirProduto);
 // Criar produto
 function criarProduto(req, res) {
     productsService.criarProduto(req.body, (err, resultado) => {
@@ -57,9 +52,6 @@ function buscarPorId(req, res) {
 function atualizarProduto(req, res) {
     const id = req.params.id;
 
-    console.log("PUT CHAMADO ID:", id);
-    console.log("BODY RECEBIDO:", req.body);
-
     productsService.atualizarProduto(id, req.body, (err, resultado) => {
         if (err) {
             return res.status(400).json(err);
@@ -80,9 +72,7 @@ function atualizarProduto(req, res) {
 // Excluir produto
 function excluirProduto(req, res) {
     const id = req.params.id;
-    console.log("DELETE CHAMADO");
-    console.log("SERVICE DENTRO DO DELETE:", productsService);
-    console.log("DELETE FUNCTION:", typeof productsService.excluirProduto);
+
     productsService.excluirProduto(id, (err, resultado) => {
         if (err) {
             return res.status(500).json({
