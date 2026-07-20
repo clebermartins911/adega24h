@@ -63,16 +63,6 @@ function criarProduto(dadosProduto, callback) {
                 callback
             );
         });
-        productModel.criarProduto(
-            {
-                nome,
-                obs,
-                preco,
-                custo,
-                estoque,
-                estoque_minimo,
-                categoria_id,
-            },
             callback
         );
     });

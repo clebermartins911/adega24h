@@ -27,7 +27,7 @@ function criarProduto(dadosProduto, callback) {
             erro: "Categoria é obrigatória",
         });
     }
-
+console.log("DEBUG categoria_id recebido:", categoria_id);
     // Confirma se categoria existe pelo ID
     productModel.buscarCategoriaPorId(categoria_id, (err, categoria) => {
         if (err) {
@@ -63,16 +63,6 @@ function criarProduto(dadosProduto, callback) {
                 callback
             );
         });
-        productModel.criarProduto(
-            {
-                nome,
-                obs,
-                preco,
-                custo,
-                estoque,
-                estoque_minimo,
-                categoria_id,
-            },
             callback
         );
     });

@@ -28,6 +28,8 @@ function criarProduto(dadosProduto, callback) {
         });
     }
 
+    console.log("DEBUG categoria_id recebido:", categoria_id);
+
     // Confirma se categoria existe pelo ID
     productModel.buscarCategoriaPorId(categoria_id, (err, categoria) => {
         if (err) {
@@ -39,19 +41,36 @@ function criarProduto(dadosProduto, callback) {
                 erro: "Categoria não encontrada",
             });
         }
+        if (!categoria) {
+            return callback({
+                erro: "Categoria não encontrada",
+            });
+        }
 
-        productModel.criarProduto(
-            {
-                nome,
-                obs,
-                preco,
-                custo,
-                estoque,
-                estoque_minimo,
-                categoria_id,
-            },
-            callback
-        );
+        productModel.buscarProdutoDuplicado(nome, obs, (err, produtoExistente) => {
+            if (err) {
+                return callback(err);
+            }
+
+            if (produtoExistente) {
+                return callback({
+                    erro: "Produto já cadastrado",
+                });
+            }
+
+            productModel.criarProduto(
+                {
+                    nome,
+                    obs,
+                    preco,
+                    custo,
+                    estoque,
+                    estoque_minimo,
+                    categoria_id,
+                },
+                callback
+            );
+        });
     });
 }
 

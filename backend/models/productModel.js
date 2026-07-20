@@ -88,7 +88,18 @@ function buscarCategoriaId(nome, callback) {
         }
     );
 }
-
+// Buscar categoria por ID
+function buscarCategoriaPorId(id, callback) {
+    db.get(
+        `
+        SELECT *
+        FROM categories
+        WHERE id = ?
+        `,
+        [id],
+        callback
+    );
+}
 // Atualizar produto
 function atualizarProduto(id, produto, callback) {
     const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id } = produto;
@@ -142,12 +153,23 @@ function excluirProduto(id, callback) {
         }
     );
 }
+function buscarProdutoDuplicado(nome, obs, callback) {
+    const sql = `
+        SELECT *
+        FROM products
+        WHERE nome = ?
+        AND obs = ?
+    `;
 
+    db.get(sql, [nome, obs], callback);
+}
 module.exports = {
     criarProduto,
     listarProdutos,
     buscarPorId,
     buscarCategoriaId,
+    buscarCategoriaPorId,
+    buscarProdutoDuplicado,
     atualizarProduto,
     excluirProduto,
 };
