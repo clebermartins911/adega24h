@@ -2,36 +2,15 @@ const db = require("../database");
 
 // Criar produto
 function criarProduto(produto, callback) {
-    const {
-        nome,
-        preco,
-        custo,
-        estoque,
-        estoque_minimo,
-        categoria_id,
-    } = produto;
+    const { nome, preco, estoque, categoria_id } = produto;
 
     db.run(
         `
         INSERT INTO products
-        (
-            nome,
-            preco,
-            custo,
-            estoque,
-            estoque_minimo,
-            categoria_id
-        )
-        VALUES (?, ?, ?, ?, ?, ?)
+        (nome, preco, estoque, categoria_id)
+        VALUES (?, ?, ?, ?)
         `,
-        [
-            nome,
-            preco,
-            custo,
-            estoque,
-            estoque_minimo,
-            categoria_id,
-        ],
+        [nome, preco, estoque, categoria_id],
         function (err) {
             if (err) {
                 return callback(err);
@@ -40,6 +19,31 @@ function criarProduto(produto, callback) {
             callback(null, {
                 id: this.lastID,
             });
+        }
+    );
+}
+
+// Listar produtos
+function listarProdutos(callback) {
+    db.all(
+        `
+        SELECT
+            products.id,
+            products.nome,
+            products.preco,
+            products.estoque,
+            categories.nome AS categoria
+        FROM products
+        LEFT JOIN categories
+            ON products.categoria_id = categories.id
+        `,
+        [],
+        (err, rows) => {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, rows);
         }
     );
 }
@@ -115,34 +119,6 @@ function excluirProduto(id, callback) {
             removidos: this.changes,
         });
     });
-}
-
-// Listar produtos
-function listarProdutos(callback) {
-    db.all(
-      
-SELECT
-    products.id,
-    products.nome,
-    products.preco,
-    products.custo,
-    products.estoque,
-    products.estoque_minimo,
-    categories.nome AS categoria
-FROM products
-LEFT JOIN categories
-    ON products.categoria_id = categories.id
-WHERE products.id = ? `
-
-        [],
-        (err, rows) => {
-            if (err) {
-                return callback(err);
-            }
-
-            callback(null, rows);
-        }
-    );
 }
 
 module.exports = {

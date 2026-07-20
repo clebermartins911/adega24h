@@ -4,8 +4,11 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
     {
-        files: ["**/*.{js,mjs,cjs}"],
+        ignores: ["**/*_backup.js", "**/backup_codigo/**"],
+    },
 
+    {
+        files: ["**/*.{js,mjs,cjs}"],
         plugins: {
             js,
         },

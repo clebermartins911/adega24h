@@ -1,7 +1,15 @@
 const productModel = require("../models/productModel");
+
 // Criar produto
 function criarProduto(dadosProduto, callback) {
-    const { nome, preco, custo, estoque, estoque_minimo, categoria_id } = dadosProduto;
+    const {
+        nome,
+        preco,
+        custo,
+        estoque,
+        estoque_minimo,
+        categoria_id,
+    } = dadosProduto;
 
     if (!nome) {
         return callback({
@@ -39,13 +47,21 @@ function criarProduto(dadosProduto, callback) {
         callback
     );
 }
+
 // Listar produtos
 function listarProdutos(callback) {
     productModel.listarProdutos(callback);
 }
 // Atualizar produto
 function atualizarProduto(id, dadosProduto, callback) {
-    const { nome, preco, custo, estoque, estoque_minimo, categoria } = dadosProduto;
+    const {
+    nome,
+    preco,
+    custo,
+    estoque,
+    estoque_minimo,
+    categoria
+} = dadosProduto;
 
     if (!nome) {
         return callback({
@@ -78,14 +94,14 @@ function atualizarProduto(id, dadosProduto, callback) {
 
         productModel.atualizarProduto(
             id,
-            {
-                nome,
-                preco,
-                custo,
-                estoque,
-                estoque_minimo,
-                categoria_id,
-            },
+           {
+    nome,
+    preco,
+    custo,
+    estoque,
+    estoque_minimo,
+    categoria_id,
+}
             callback
         );
     });
