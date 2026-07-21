@@ -1,6 +1,6 @@
 /* ================================
-   ADEGA24H SYSTEM - ADMIN
-   Layout principal
+   ADEGA24H SYSTEM - CLIENTE
+   Layout de compra
 ================================ */
 
 * {
@@ -15,9 +15,7 @@ body {
     color: #333;
 }
 
-/* ================================
-   CABEÇALHO
-================================ */
+/* CABEÇALHO */
 
 .topbar {
     height: 60px;
@@ -40,79 +38,113 @@ body {
     font-size: 15px;
 }
 
-/* ================================
-   ESTRUTURA PRINCIPAL
-================================ */
+/* BUSCA */
 
-.container {
-    display: flex;
-    min-height: calc(100vh - 100px);
+.busca {
+    padding: 20px;
+    text-align: center;
 }
 
-/* ================================
-   MENU LATERAL
-================================ */
+.busca input {
+    width: 80%;
+    max-width: 500px;
 
-.sidebar {
-    width: 250px;
+    padding: 12px;
 
-    background: #1f2937;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 
-    color: white;
+    font-size: 16px;
+}
 
+/* PRODUTOS */
+
+.produtos-area {
     padding: 20px;
 }
 
-.sidebar h2 {
-    margin-bottom: 20px;
+#listaProdutos {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+    gap: 20px;
 }
 
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar li {
-    padding: 12px;
-
-    margin-bottom: 8px;
-
-    cursor: pointer;
-
-    border-radius: 5px;
-}
-
-.sidebar li:hover {
-    background: #374151;
-}
-
-/* ================================
-   ÁREA PRINCIPAL
-================================ */
-
-main {
-    flex: 1;
-
-    padding: 30px;
-
+.produto-card {
     background: white;
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 2px 8px #ddd;
 }
 
-/* ================================
-   RODAPÉ
-================================ */
+.produto-card h3 {
+    margin-bottom: 10px;
+}
 
-.footer {
-    height: 40px;
+.produto-card strong {
+    display: block;
 
-    background: #111827;
+    margin: 10px 0;
+
+    font-size: 20px;
+}
+
+.produto-card button {
+    width: 100%;
+
+    padding: 10px;
+
+    background: #16a34a;
 
     color: white;
 
-    display: flex;
+    border: none;
 
-    align-items: center;
+    border-radius: 6px;
 
-    justify-content: center;
+    cursor: pointer;
+}
 
-    font-size: 14px;
+.produto-card button:hover {
+    background: #15803d;
+}
+
+/* CARRINHO */
+
+.carrinho {
+    position: fixed;
+
+    right: 20px;
+
+    bottom: 20px;
+
+    width: 300px;
+
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 3px 10px #bbb;
+}
+
+.carrinho button {
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 10px;
+
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 6px;
 }
