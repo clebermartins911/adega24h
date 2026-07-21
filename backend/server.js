@@ -9,6 +9,10 @@ const { getActiveModules } = require("./core/utils/moduleLoader");
 
 const app = express();
 
+// ===============================
+// CONFIGURAÇÕES
+// ===============================
+
 app.use(cors());
 app.use(express.json());
 
@@ -25,16 +29,11 @@ console.log("FRONTEND CARREGADO:", path.join(__dirname, "frontend"));
 // ===============================
 
 app.get("/admin", (req, res) => {
-    console.log("ENTROU NA ROTA ADMIN");
-
     res.sendFile(path.join(__dirname, "frontend", "admin", "index.html"));
 });
-console.log("ROTA ADMIN FOI REGISTRADA");
-
-console.log("ADMIN CARREGADO:", path.join(__dirname, "frontend/admin"));
 
 // ===============================
-// ROTAS DO CORE
+// ROTAS DO SISTEMA
 // ===============================
 
 const productRoutes = require("./routes/products");
@@ -48,41 +47,40 @@ const scannerRoutes = require("./routes/scanner");
 const autoRoutes = require("./routes/auto");
 const alertRoutes = require("./routes/alerts");
 
+// Módulos
+
+const cartRoutes = require("./modules/cart/routes");
+
 // ===============================
 // REGISTRO DAS ROTAS
 // ===============================
 
 app.use("/products", productRoutes);
+
 app.use("/sales", salesRoutes);
+
 app.use("/categories", categoryRoutes);
+
 app.use("/stock", stockRoutes);
+
 app.use("/customers", customerRoutes);
+
 app.use("/suppliers", supplierRoutes);
+
 app.use("/edition", editionRoutes);
-app.use("/auto", autoRoutes);
-app.use("/alerts", alertRoutes);
+
 app.use("/scanner", scannerRoutes);
 
-// DEBUG DAS ROTAS
+app.use("/auto", autoRoutes);
 
-console.log("SCANNER STACK:");
+app.use("/alerts", alertRoutes);
 
-scannerRoutes.stack.forEach((r) => {
-    console.log(r.route.path, Object.keys(r.route.methods));
-});
+// Carrinho
 
-console.log(
-    "EDITION ROTAS:",
-    editionRoutes.stack.map((r) => r.route.path)
-);
-
-console.log(
-    "AUTO ROTAS:",
-    autoRoutes.stack.map((r) => r.route.path)
-);
+app.use("/cart", cartRoutes);
 
 // ===============================
-// ROTAS DO SISTEMA
+// STATUS DO SISTEMA
 // ===============================
 
 app.get("/status", (req, res) => {
@@ -107,17 +105,13 @@ app.get("/status", (req, res) => {
     });
 });
 
+// ===============================
+// TESTE SERVIDOR
+// ===============================
+
 app.get("/teste", (req, res) => {
     res.json({
         mensagem: "Servidor funcionando",
-    });
-});
-
-app.get("/debug", (req, res) => {
-    res.json({
-        customers: "OK",
-
-        suppliers: "OK",
     });
 });
 
