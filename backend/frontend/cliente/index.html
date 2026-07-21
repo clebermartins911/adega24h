@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Adega24hSystem - Cliente</title>
+
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+
+    <body>
+        <header class="topbar">
+            <div class="logo">🍺 Adega24hSystem</div>
+
+            <div class="usuario">Cliente</div>
+        </header>
+
+        <section class="busca">
+            <input type="text" id="buscarProduto" placeholder="Digite o produto..." />
+        </section>
+
+        <main class="produtos-area">
+            <h2>Produtos disponíveis</h2>
+
+            <div id="listaProdutos">
+                <!-- Produtos carregados pela API -->
+            </div>
+        </main>
+
+        <aside class="carrinho">
+            <h2>🛒 Carrinho</h2>
+
+            <div id="itensCarrinho">Nenhum produto adicionado.</div>
+
+            <h3>Total: R$ <span id="total">0,00</span></h3>
+
+            <button id="finalizar">Finalizar Compra</button>
+        </aside>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>
