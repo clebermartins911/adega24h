@@ -102,12 +102,36 @@ function filtrarProdutos(texto) {
 }
 
 /*
-    Futuro módulo CART
+    Adicionar produto ao carrinho
 */
-function adicionarProduto(id) {
+async function adicionarProduto(id) {
     const produto = listaCompletaProdutos.find((item) => item.id === id);
 
-    console.log("Produto selecionado:", produto);
+    if (!produto) {
+        console.error("Produto não encontrado");
+        return;
+    }
 
-    alert(`${produto.nome} enviado para o carrinho`);
+    try {
+        const resposta = await fetch(`${API}/cart/add`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                produto_id: produto.id,
+                nome: produto.nome,
+                preco: produto.preco,
+                quantidade: 1,
+            }),
+        });
+
+        const dados = await resposta.json();
+
+        console.log("Produto enviado para carrinho:", dados);
+
+        alert(`${produto.nome} adicionado ao carrinho`);
+    } catch (erro) {
+        console.error("Erro ao adicionar produto:", erro);
+    }
 }
