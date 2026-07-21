@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const systemConfig = require("./core/config/systemConfig");
 const storeConfig = require("./core/config/storeConfig");
@@ -10,6 +11,27 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// ===============================
+// FRONTEND
+// ===============================
+
+app.use(express.static(path.join(__dirname, "frontend")));
+
+console.log("FRONTEND CARREGADO:", path.join(__dirname, "frontend"));
+
+// ===============================
+// ADMIN
+// ===============================
+
+app.get("/admin", (req, res) => {
+    console.log("ENTROU NA ROTA ADMIN");
+
+    res.sendFile(path.join(__dirname, "frontend", "admin", "index.html"));
+});
+console.log("ROTA ADMIN FOI REGISTRADA");
+
+console.log("ADMIN CARREGADO:", path.join(__dirname, "frontend/admin"));
 
 // ===============================
 // ROTAS DO CORE
