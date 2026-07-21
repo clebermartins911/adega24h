@@ -1,8 +1,12 @@
 const productModel = require("../models/productModel");
 
+// ===============================
 // Criar produto
+// ===============================
+
 function criarProduto(dadosProduto, callback) {
-    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id } = dadosProduto;
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, codigo_barras } =
+        dadosProduto;
 
     if (!nome) {
         return callback({
@@ -30,17 +34,11 @@ function criarProduto(dadosProduto, callback) {
 
     console.log("DEBUG categoria_id recebido:", categoria_id);
 
-    // Confirma se categoria existe pelo ID
     productModel.buscarCategoriaPorId(categoria_id, (err, categoria) => {
         if (err) {
             return callback(err);
         }
 
-        if (!categoria) {
-            return callback({
-                erro: "Categoria não encontrada",
-            });
-        }
         if (!categoria) {
             return callback({
                 erro: "Categoria não encontrada",
@@ -67,6 +65,7 @@ function criarProduto(dadosProduto, callback) {
                     estoque,
                     estoque_minimo,
                     categoria_id,
+                    codigo_barras,
                 },
                 callback
             );
@@ -74,14 +73,28 @@ function criarProduto(dadosProduto, callback) {
     });
 }
 
+// ===============================
 // Listar produtos
+// ===============================
+
 function listarProdutos(callback) {
     productModel.listarProdutos(callback);
 }
 
+// ===============================
+// Buscar produto por ID
+// ===============================
+
+function buscarPorId(id, callback) {
+    productModel.buscarPorId(id, callback);
+}
+
+// ===============================
 // Atualizar produto
+// ===============================
+
 function atualizarProduto(id, dadosProduto, callback) {
-    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria, categoria_id } =
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, codigo_barras } =
         dadosProduto;
 
     if (!nome) {
@@ -102,65 +115,42 @@ function atualizarProduto(id, dadosProduto, callback) {
         });
     }
 
-    // aceita categoria_id direto ou busca pelo nome da categoria
-
-    if (categoria_id) {
-        return productModel.atualizarProduto(
-            id,
-            {
-                nome,
-                obs,
-                preco,
-                custo,
-                estoque,
-                estoque_minimo,
-                categoria_id,
-            },
-            callback
-        );
-    }
-
-    productModel.buscarCategoriaId(categoria, (err, categoria_idEncontrada) => {
-        if (err) {
-            return callback(err);
-        }
-
-        if (!categoria_idEncontrada) {
-            return callback({
-                erro: "Categoria não encontrada",
-            });
-        }
-
-        productModel.atualizarProduto(
-            id,
-            {
-                nome,
-                obs,
-                preco,
-                custo,
-                estoque,
-                estoque_minimo,
-                categoria_id: categoria_idEncontrada,
-            },
-            callback
-        );
-    });
+    productModel.atualizarProduto(
+        id,
+        {
+            nome,
+            obs,
+            preco,
+            custo,
+            estoque,
+            estoque_minimo,
+            categoria_id,
+            codigo_barras,
+        },
+        callback
+    );
 }
 
-// Buscar produto por ID
-function buscarPorId(id, callback) {
-    productModel.buscarPorId(id, callback);
-}
-
+// ===============================
 // Excluir produto
+// ===============================
+
 function excluirProduto(id, callback) {
     productModel.excluirProduto(id, callback);
 }
+
+// ===============================
+// Exportação
+// ===============================
+
 module.exports = {
     criarProduto,
+
     listarProdutos,
+
     buscarPorId,
 
     atualizarProduto,
+
     excluirProduto,
 };

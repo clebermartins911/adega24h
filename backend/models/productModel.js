@@ -2,7 +2,8 @@ const db = require("../database");
 
 // Criar produto
 function criarProduto(produto, callback) {
-    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id } = produto;
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, codigo_barras } =
+        produto;
 
     db.run(
         `
@@ -14,11 +15,12 @@ function criarProduto(produto, callback) {
             custo,
             estoque,
             estoque_minimo,
-            categoria_id
+            categoria_id,
+            codigo_barras
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
-        [nome, obs, preco, custo, estoque, estoque_minimo, categoria_id],
+        [nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, codigo_barras],
         function (err) {
             if (err) {
                 return callback(err);
@@ -30,7 +32,6 @@ function criarProduto(produto, callback) {
         }
     );
 }
-
 // Listar produtos
 function listarProdutos(callback) {
     db.all(

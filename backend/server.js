@@ -22,6 +22,7 @@ const stockRoutes = require("./routes/stock");
 const customerRoutes = require("./routes/customers");
 const supplierRoutes = require("./routes/suppliers");
 const editionRoutes = require("./routes/edition");
+const scannerRoutes = require("./routes/scanner");
 const autoRoutes = require("./routes/auto");
 const alertRoutes = require("./routes/alerts");
 
@@ -38,6 +39,15 @@ app.use("/suppliers", supplierRoutes);
 app.use("/edition", editionRoutes);
 app.use("/auto", autoRoutes);
 app.use("/alerts", alertRoutes);
+app.use("/scanner", scannerRoutes);
+
+// DEBUG DAS ROTAS
+
+console.log("SCANNER STACK:");
+
+scannerRoutes.stack.forEach((r) => {
+    console.log(r.route.path, Object.keys(r.route.methods));
+});
 
 console.log(
     "EDITION ROTAS:",
@@ -90,7 +100,7 @@ app.get("/debug", (req, res) => {
 });
 
 // ===============================
-// INICIALIZAÇÃO DO SERVIDOR
+// INICIALIZAÇÃO
 // ===============================
 
 const PORT = process.env.PORT || 3000;
