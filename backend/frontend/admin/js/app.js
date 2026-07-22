@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     carregarComponente("header", "components/header.html");
     carregarComponente("sidebar", "components/sidebar.html");
     carregarComponente("footer", "components/footer.html");
+    carregarPagina("dashboard");
 });
 
 async function carregarComponente(id, arquivo) {
