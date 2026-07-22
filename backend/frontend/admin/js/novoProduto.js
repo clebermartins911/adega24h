@@ -1,8 +1,26 @@
+async function carregarCategorias() {
+    const resposta = await fetch("/categories");
+    const categorias = await resposta.json();
+
+    const select = document.getElementById("categoria");
+
+    categorias.forEach((categoria) => {
+        const option = document.createElement("option");
+
+        option.value = categoria.id;
+        option.textContent = categoria.nome;
+
+        select.appendChild(option);
+    });
+}
+
+carregarCategorias();
+
 document.getElementById("salvarProduto").addEventListener("click", async () => {
     const produto = {
         nome: document.getElementById("nome").value,
 
-        categoria: document.getElementById("categoria").value,
+        categoria_id: Number(document.getElementById("categoria").value),
 
         preco: Number(document.getElementById("preco").value),
 
@@ -28,7 +46,6 @@ document.getElementById("salvarProduto").addEventListener("click", async () => {
 
         if (!resposta.ok) {
             alert(resultado.erro);
-
             return;
         }
 
