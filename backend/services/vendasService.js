@@ -1,6 +1,9 @@
 const saleModel = require("../models/saleModel");
 const stockModel = require("../models/stockModel");
 
+const pixService = require("../integrations/pix/pixService");
+const printerService = require("../integrations/printers/printerService");
+
 // Criar uma venda com regras do negócio
 function criarVenda(dadosVenda, callback) {
     const { cliente_id, produto_id, quantidade } = dadosVenda;
@@ -75,7 +78,29 @@ function criarVenda(dadosVenda, callback) {
                     quantidade,
                     valor_total,
                 },
-                callback
+                (err, venda) => {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    // Gerar PIX
+                    const pix = pixService.gerarPix(valor_total);
+
+                    // Imprimir cupom
+                    printerService.imprimirCupom({
+                        venda_id: venda.id,
+                        cliente_id,
+                        produto_id,
+                        quantidade,
+                        valor_total,
+                        pagamento: pix.tipo,
+                    });
+
+                    callback(null, {
+                        venda,
+                        pix,
+                    });
+                }
             );
         });
     });

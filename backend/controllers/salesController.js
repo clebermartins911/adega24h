@@ -12,7 +12,8 @@ function criarVenda(req, res) {
 
         res.status(201).json({
             mensagem: "Venda criada com sucesso!",
-            venda: resultado,
+            venda: resultado.venda,
+            pix: resultado.pix,
         });
     });
 }
