@@ -1,0 +1,34 @@
+<div class="pagina-caixas">
+    <h2>🏧 Gerenciamento de Caixas</h2>
+
+    <div class="card">
+        <label>Código do Caixa</label>
+        <input id="codigo" type="text" placeholder="Ex: CX01" />
+
+        <label>Nome do Caixa</label>
+        <input id="nome" type="text" placeholder="Ex: Caixa Principal" />
+
+        <button id="salvarCaixa">➕ Cadastrar Caixa</button>
+    </div>
+
+    <hr />
+
+    <h3>Caixas cadastrados</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Nome</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="listaCaixas"></tbody>
+    </table>
+</div>
+
+<link rel="stylesheet" href="css/caixas.css" />
+<script src="js/caixas.js"></script>

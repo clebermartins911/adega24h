@@ -48,6 +48,7 @@ const editionRoutes = require("./routes/edition");
 const scannerRoutes = require("./routes/scanner");
 const autoRoutes = require("./routes/auto");
 const alertRoutes = require("./routes/alerts");
+const caixaRoutes = require("./routes/caixas");
 
 // Módulos
 
@@ -76,6 +77,7 @@ app.use("/scanner", scannerRoutes);
 app.use("/auto", autoRoutes);
 
 app.use("/alerts", alertRoutes);
+app.use("/caixas", caixaRoutes);
 
 // Carrinho
 
