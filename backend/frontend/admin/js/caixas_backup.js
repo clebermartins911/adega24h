@@ -13,56 +13,17 @@ async function carregarCaixas() {
                 <td>${caixa.codigo}</td>
                 <td>${caixa.nome}</td>
                 <td>${caixa.status}</td>
-
-                <td>
-                    ${
-                        caixa.status === "ABERTO"
-                            ? `<button onclick="fecharCaixa(${caixa.id})">
-                            Fechar Caixa
-                         </button>`
-                            : `<button onclick="abrirCaixa(${caixa.id})">
-                            Abrir Caixa
-                         </button>`
-                    }
-                </td>
             </tr>
         `;
     });
 }
 
-// Abrir caixa
-async function abrirCaixa(id) {
-    const resposta = await fetch(`/caixas/${id}/abrir`, {
-        method: "POST",
-    });
-
-    const resultado = await resposta.json();
-
-    alert(resultado.mensagem);
-
-    carregarCaixas();
-}
-
-// Fechar caixa
-async function fecharCaixa(id) {
-    const resposta = await fetch(`/caixas/${id}/fechar`, {
-        method: "POST",
-    });
-
-    const resultado = await resposta.json();
-
-    alert(resultado.mensagem);
-
-    carregarCaixas();
-}
-
-// Carrega lista inicial
 carregarCaixas();
 
-// Cadastro de caixa
 document.getElementById("salvarCaixa").addEventListener("click", async () => {
     const caixa = {
         codigo: document.getElementById("codigo").value,
+
         nome: document.getElementById("nome").value,
     };
 
@@ -80,7 +41,6 @@ document.getElementById("salvarCaixa").addEventListener("click", async () => {
 
     if (!resposta.ok) {
         alert(resultado.erro);
-
         return;
     }
 

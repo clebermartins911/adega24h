@@ -28,8 +28,6 @@ console.log("FRONTEND CARREGADO:", path.join(__dirname, "frontend"));
 // ADMIN
 // ===============================
 
-app.use(express.static(path.join(__dirname, "frontend")));
-
 app.get("/admin", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "admin", "index.html"));
 });
@@ -49,6 +47,7 @@ const scannerRoutes = require("./routes/scanner");
 const autoRoutes = require("./routes/auto");
 const alertRoutes = require("./routes/alerts");
 const caixaRoutes = require("./routes/caixas");
+const adminRoutes = require("./routes/admin");
 
 // Módulos
 
@@ -78,6 +77,7 @@ app.use("/auto", autoRoutes);
 
 app.use("/alerts", alertRoutes);
 app.use("/caixas", caixaRoutes);
+app.use("/admin", adminRoutes);
 
 // Carrinho
 

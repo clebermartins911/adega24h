@@ -9,6 +9,7 @@ async function carregarPagina(nome) {
         const html = await resposta.text();
 
         document.getElementById("content").innerHTML = html;
+        executarScriptsPagina(nome);
 
         const scripts = document.getElementById("content").querySelectorAll("script");
 

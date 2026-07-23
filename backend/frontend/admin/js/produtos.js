@@ -6,6 +6,10 @@ async function carregarProdutos() {
 
         const tabela = document.getElementById("listaProdutos");
 
+        if (!tabela) {
+            return;
+        }
+
         tabela.innerHTML = "";
 
         produtos.forEach((produto) => {
@@ -64,8 +68,16 @@ async function excluirProduto(id) {
     carregarProdutos();
 }
 
-carregarProdutos();
+const listaProdutos = document.getElementById("listaProdutos");
 
-document.getElementById("novoProduto").addEventListener("click", () => {
-    carregarPagina("novo-produto");
-});
+if (listaProdutos) {
+    carregarProdutos();
+}
+
+const novoProduto = document.getElementById("novoProduto");
+
+if (novoProduto) {
+    novoProduto.addEventListener("click", () => {
+        carregarPagina("novo-produto");
+    });
+}
