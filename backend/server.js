@@ -31,6 +31,13 @@ console.log("FRONTEND CARREGADO:", path.join(__dirname, "frontend"));
 app.get("/admin", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "admin", "index.html"));
 });
+// ===============================
+// PDV
+// ===============================
+
+app.get("/pdv", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "pdv", "index.html"));
+});
 
 // ===============================
 // ROTAS DO SISTEMA
