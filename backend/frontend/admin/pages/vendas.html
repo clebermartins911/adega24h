@@ -1,0 +1,37 @@
+<h2>💰 Vendas</h2>
+
+<div class="acoes">
+    <input type="text" id="buscarProduto" placeholder="Digite o nome ou código do produto" />
+
+    <button id="adicionarProduto" onclick="adicionarProduto()">➕ Adicionar</button>
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Qtd</th>
+                <th>Valor Unit.</th>
+                <th>Total</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="listaVenda"></tbody>
+    </table>
+
+    <div class="resumo-venda">
+        <h3>Total: <span id="totalVenda">R$ 0,00</span></h3>
+    </div>
+
+    <div class="pagamento">
+        <label>Forma de Pagamento</label>
+
+        <select id="formaPagamento">
+            <option value="PIX">PIX</option>
+            <option value="DINHEIRO">Dinheiro</option>
+            <option value="DEBITO">Cartão Débito</option>
+            <option value="CREDITO">Cartão Crédito</option>
+        </select>
+
+        <button onclick="finalizarVenda()">✅ Finalizar Venda</button>
+    </div>
+</div>

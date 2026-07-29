@@ -26,15 +26,35 @@ async function carregarComponente(id, arquivo) {
 
 // Executa funções específicas de cada página
 function executarScriptsPagina(nome) {
-    if (nome === "produtos") {
-        if (typeof carregarProdutos === "function") {
-            carregarProdutos();
-        }
+    if (nome === "produtos" && typeof carregarProdutos === "function") {
+        carregarProdutos();
     }
 
-    if (nome === "caixas") {
-        if (typeof carregarCaixas === "function") {
-            carregarCaixas();
-        }
+    if (nome === "caixas" && typeof carregarCaixas === "function") {
+        carregarCaixas();
+    }
+
+    if (nome === "categorias" && typeof carregarCategorias === "function") {
+        carregarCategorias();
+    }
+
+    if (nome === "estoque" && typeof carregarEstoque === "function") {
+        carregarEstoque();
+    }
+
+    if (nome === "clientes" && typeof carregarClientes === "function") {
+        carregarClientes();
+    }
+
+    if (nome === "fornecedores" && typeof carregarFornecedores === "function") {
+        carregarFornecedores();
+    }
+
+    if (nome === "vendas" && typeof carregarVendas === "function") {
+        carregarVendas();
+    }
+
+    if (nome === "financeiro" && typeof carregarFinanceiro === "function") {
+        carregarFinanceiro();
     }
 }

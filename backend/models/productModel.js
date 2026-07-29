@@ -1,4 +1,5 @@
 const db = require("../database");
+console.log("MODEL CARREGADO:", __filename);
 
 // Criar produto
 function criarProduto(produto, callback) {
@@ -34,6 +35,7 @@ function criarProduto(produto, callback) {
 }
 // Listar produtos
 function listarProdutos(callback) {
+    console.log(">>> listarProdutos executada <<<");
     db.all(
         `
         SELECT
@@ -44,17 +46,18 @@ function listarProdutos(callback) {
             products.custo,
             products.estoque,
             products.estoque_minimo,
+            products.codigo_barras,
             categories.nome AS categoria
-
         FROM products
-
         LEFT JOIN categories
-        ON products.categoria_id = categories.id
-
+            ON products.categoria_id = categories.id
         ORDER BY products.nome
         `,
         [],
-        callback
+        (err, rows) => {
+            console.log("PRODUTOS:", rows);
+            callback(err, rows);
+        }
     );
 }
 
@@ -103,25 +106,24 @@ function buscarCategoriaPorId(id, callback) {
 }
 // Atualizar produto
 function atualizarProduto(id, produto, callback) {
-    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id } = produto;
+    const { nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, codigo_barras } =
+        produto;
 
     db.run(
         `
         UPDATE products
-
         SET
-        nome=?,
-        obs=?,
-        preco=?,
-        custo=?,
-        estoque=?,
-        estoque_minimo=?,
-        categoria_id=?
-
-        WHERE id=?
+            nome = ?,
+            obs = ?,
+            preco = ?,
+            custo = ?,
+            estoque = ?,
+            estoque_minimo = ?,
+            categoria_id = ?,
+            codigo_barras = ?
+        WHERE id = ?
         `,
-        [nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, id],
-
+        [nome, obs, preco, custo, estoque, estoque_minimo, categoria_id, codigo_barras, id],
         function (err) {
             if (err) {
                 return callback(err);

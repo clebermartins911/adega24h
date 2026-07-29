@@ -1,8 +1,12 @@
 async function carregarCaixas() {
+    const tabela = document.getElementById("listaCaixas");
+
+    if (!tabela) {
+        return;
+    }
+
     const resposta = await fetch("/caixas");
     const caixas = await resposta.json();
-
-    const tabela = document.getElementById("listaCaixas");
 
     tabela.innerHTML = "";
 
@@ -13,16 +17,11 @@ async function carregarCaixas() {
                 <td>${caixa.codigo}</td>
                 <td>${caixa.nome}</td>
                 <td>${caixa.status}</td>
-
                 <td>
                     ${
                         caixa.status === "ABERTO"
-                            ? `<button onclick="fecharCaixa(${caixa.id})">
-                            Fechar Caixa
-                         </button>`
-                            : `<button onclick="abrirCaixa(${caixa.id})">
-                            Abrir Caixa
-                         </button>`
+                            ? `<button onclick="fecharCaixa(${caixa.id})">Fechar Caixa</button>`
+                            : `<button onclick="abrirCaixa(${caixa.id})">Abrir Caixa</button>`
                     }
                 </td>
             </tr>
@@ -30,7 +29,6 @@ async function carregarCaixas() {
     });
 }
 
-// Abrir caixa
 async function abrirCaixa(id) {
     const resposta = await fetch(`/caixas/${id}/abrir`, {
         method: "POST",
@@ -43,7 +41,6 @@ async function abrirCaixa(id) {
     carregarCaixas();
 }
 
-// Fechar caixa
 async function fecharCaixa(id) {
     const resposta = await fetch(`/caixas/${id}/fechar`, {
         method: "POST",
@@ -56,38 +53,37 @@ async function fecharCaixa(id) {
     carregarCaixas();
 }
 
-// Carrega lista inicial
 carregarCaixas();
 
-// Cadastro de caixa
-document.getElementById("salvarCaixa").addEventListener("click", async () => {
-    const caixa = {
-        codigo: document.getElementById("codigo").value,
-        nome: document.getElementById("nome").value,
-    };
+const botaoSalvar = document.getElementById("salvarCaixa");
 
-    const resposta = await fetch("/caixas", {
-        method: "POST",
+if (botaoSalvar) {
+    botaoSalvar.addEventListener("click", async () => {
+        const caixa = {
+            codigo: document.getElementById("codigo").value,
+            nome: document.getElementById("nome").value,
+        };
 
-        headers: {
-            "Content-Type": "application/json",
-        },
+        const resposta = await fetch("/caixas", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(caixa),
+        });
 
-        body: JSON.stringify(caixa),
+        const resultado = await resposta.json();
+
+        if (!resposta.ok) {
+            alert(resultado.erro);
+            return;
+        }
+
+        alert(resultado.mensagem);
+
+        document.getElementById("codigo").value = "";
+        document.getElementById("nome").value = "";
+
+        carregarCaixas();
     });
-
-    const resultado = await resposta.json();
-
-    if (!resposta.ok) {
-        alert(resultado.erro);
-
-        return;
-    }
-
-    alert(resultado.mensagem);
-
-    document.getElementById("codigo").value = "";
-    document.getElementById("nome").value = "";
-
-    carregarCaixas();
-});
+}

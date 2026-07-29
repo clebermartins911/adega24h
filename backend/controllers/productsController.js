@@ -16,6 +16,8 @@ function criarProduto(req, res) {
 
 // Listar produtos
 function listarProdutos(req, res) {
+    console.log("CONTROLLER listarProdutos EXECUTADO");
+
     productsService.listarProdutos((err, produtos) => {
         if (err) {
             return res.status(500).json({
