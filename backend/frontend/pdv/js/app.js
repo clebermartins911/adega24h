@@ -14,26 +14,20 @@ const listaItens = document.getElementById("listaItens");
 const totalVenda = document.getElementById("totalVenda");
 const quantidadeItens = document.getElementById("quantidadeItens");
 const resumoVenda = document.getElementById("resumoVenda");
+let produtos = [];
+async function carregarProdutos() {
+    try {
+        const resposta = await fetch("/products");
 
-// Produtos de teste
-const produtosTeste = {
-    789001: { nome: "Heineken Long Neck", preco: 12.0 },
-    789002: { nome: "Corona Extra", preco: 18.0 },
-    789003: { nome: "Skol Lata", preco: 5.5 },
-    789004: { nome: "Brahma Duplo Malte", preco: 6.5 },
-    789005: { nome: "Budweiser", preco: 8.0 },
-    789006: { nome: "Stella Artois", preco: 10.5 },
-    789007: { nome: "Antarctica Original", preco: 11.0 },
-    789008: { nome: "Amstel", preco: 7.5 },
-    789009: { nome: "Red Bull", preco: 13.0 },
-    789010: { nome: "Coca-Cola 2L", preco: 11.9 },
-    789011: { nome: "Pepsi 2L", preco: 10.9 },
-    789012: { nome: "Guaraná Antarctica 2L", preco: 9.9 },
-    789013: { nome: "Água Mineral", preco: 3.5 },
-    789014: { nome: "Whisky Red Label", preco: 89.9 },
-    789015: { nome: "Vodka Smirnoff", preco: 42.9 },
-};
+        produtos = await resposta.json();
 
+        console.log(produtos);
+
+        console.log(`${produtos.length} produtos carregados.`);
+    } catch (erro) {
+        console.error("Erro ao carregar produtos:", erro);
+    }
+}
 // Carrinho
 let carrinho = [];
 let valorTotal = 0;
@@ -56,10 +50,9 @@ codigo.addEventListener("keydown", function (e) {
 
 // Adiciona produto
 function adicionarProduto(cod) {
-    console.log("Código recebido:", "[" + cod + "]");
     if (cod === "") return;
 
-    const dados = produtosTeste[cod];
+    const dados = produtos.find((produto) => produto.codigo_barras === cod);
 
     if (!dados) {
         alert("Produto não encontrado!");
@@ -137,3 +130,4 @@ function atualizarTabela() {
     quantidadeItens.textContent = carrinho.length;
     atualizarResumoVenda();
 }
+carregarProdutos();

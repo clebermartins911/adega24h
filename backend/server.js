@@ -45,6 +45,7 @@ app.get("/pdv", (req, res) => {
 
 const productRoutes = require("./routes/products");
 const salesRoutes = require("./routes/sales");
+const salesV2Routes = require("./routes/salesV2");
 const categoryRoutes = require("./routes/categories");
 const stockRoutes = require("./routes/stock");
 const customerRoutes = require("./routes/customers");
@@ -67,6 +68,7 @@ const cartRoutes = require("./modules/cart/routes");
 app.use("/products", productRoutes);
 
 app.use("/sales", salesRoutes);
+app.use("/salesV2", salesV2Routes);
 
 app.use("/categories", categoryRoutes);
 
