@@ -7,7 +7,31 @@
 
         <link rel="stylesheet" href="css/style.css" />
     </head>
+    <!-- MODAL DE PRODUTOS -->
+    <div id="modalProdutos" class="modal">
+        <div class="modal-conteudo">
+            <div class="modal-topo">
+                <h2>Buscar Produto</h2>
 
+                <button id="fecharModal">✕</button>
+            </div>
+
+            <input type="text" id="pesquisaProduto" placeholder="Digite o nome ou código..." />
+
+            <table class="tabela-modal">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>Estoque</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaProdutosModal"></tbody>
+            </table>
+        </div>
+    </div>
     <body>
         <div class="pdv">
             <!-- CABEÇALHO -->
@@ -16,11 +40,11 @@
 
                 <div class="caixa">Caixa: CX-01</div>
             </header>
+
             <!-- CONTEÚDO -->
             <main class="conteudo">
-                <!-- LADO ESQUERDO -->
+                <!-- ESQUERDA -->
                 <section class="esquerda">
-                    <!-- Código -->
                     <div class="codigo-box">
                         <label>Código de Barras</label>
 
@@ -31,6 +55,7 @@
                             autofocus
                         />
                     </div>
+
                     <div class="produto-box">
                         <h3>Produto Atual</h3>
 
@@ -51,7 +76,7 @@
                             </span>
                         </div>
                     </div>
-                    <!-- Lista -->
+
                     <div class="itens-box">
                         <table>
                             <thead>
@@ -69,7 +94,7 @@
                     </div>
                 </section>
 
-                <!-- LADO DIREITO -->
+                <!-- DIREITA -->
                 <aside class="direita">
                     <h3>Resumo da Venda</h3>
 
@@ -79,7 +104,6 @@
 
                     <div class="resumo-item">
                         Itens
-
                         <span id="quantidadeItens">0</span>
                     </div>
 
@@ -92,21 +116,19 @@
 
             <!-- RODAPÉ -->
             <footer class="atalhos">
-                <span>F2 Produto</span>
-
+                <span id="btnProduto">F2 Produto</span>
                 <span>F3 Buscar</span>
-
                 <span>F4 Desconto</span>
 
-                <span>F5 PIX</span>
+                <span id="btnPix">F5 PIX</span>
 
-                <span>F6 Dinheiro</span>
+                <span id="btnDinheiro">F6 Dinheiro</span>
 
-                <span>F7 Cartão</span>
+                <span id="btnCartao">F7 Cartão</span>
 
-                <span>F8 Cancelar</span>
+                <span id="btnCancelar">F8 Cancelar</span>
 
-                <span class="finalizar"> F12 Finalizar </span>
+                <span id="btnFinalizar" class="finalizar">F12 Finalizar</span>
             </footer>
         </div>
 
