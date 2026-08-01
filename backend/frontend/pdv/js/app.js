@@ -32,6 +32,9 @@ async function carregarProdutos() {
 let carrinho = [];
 let valorTotal = 0;
 let formaPagamento = "PIX";
+let caixaAtual = null;
+let funcionarioAtual = null;
+let desconto = 0;
 // Foco no leitor
 codigo.focus();
 
@@ -129,7 +132,9 @@ function atualizarTabela() {
         listaItens.appendChild(tr);
     });
 
-    totalVenda.textContent = "R$ " + valorTotal.toFixed(2);
+    const totalComDesconto = Math.max(0, valorTotal - desconto);
+
+    totalVenda.textContent = "R$ " + totalComDesconto.toFixed(2);
     quantidadeItens.textContent = carrinho.length;
     atualizarResumoVenda();
 }
@@ -157,7 +162,26 @@ function carregarProdutosModal(lista = produtos) {
         });
 
         tabela.appendChild(tr);
+        console.log("Produtos carregados:", tabela.rows.length);
     });
+}
+function aplicarDesconto() {
+    const valor = prompt("Informe o desconto em R$");
+
+    if (valor === null) return;
+
+    const descontoInformado = Number(valor.replace(",", "."));
+
+    if (isNaN(descontoInformado) || descontoInformado < 0) {
+        alert("Valor de desconto inválido.");
+        return;
+    }
+
+    desconto = descontoInformado;
+
+    atualizarTabela();
+
+    alert("Desconto aplicado com sucesso!");
 }
 function cancelarVenda() {
     carrinho = [];
@@ -178,16 +202,21 @@ async function finalizarVenda() {
         alert("Carrinho vazio!");
         return;
     }
-
+    if (!caixaAtual) {
+        alert("Abra o caixa antes de realizar uma venda.");
+        return;
+    }
     const venda = {
         cliente_id: null,
+        caixa_id: caixaAtual,
+        funcionario_id: funcionarioAtual,
+        desconto: desconto,
         forma_pagamento: formaPagamento,
         itens: carrinho.map((item) => ({
             produto_id: item.produto_id,
             quantidade: item.quantidade,
         })),
     };
-
     try {
         const resposta = await fetch("/salesV2", {
             method: "POST",
@@ -222,6 +251,47 @@ async function finalizarVenda() {
         alert("Erro ao conectar ao servidor.");
     }
 }
+async function abrirCaixa() {
+    try {
+        const resposta = await fetch("/caixas/1/abrir", {
+            method: "POST",
+        });
+
+        const resultado = await resposta.json();
+
+        alert(resultado.mensagem);
+
+        caixaAtual = 1;
+
+        if (statusCaixa) {
+            statusCaixa.textContent = "Caixa: Aberto";
+        }
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro ao abrir caixa.");
+    }
+}
+
+async function fecharCaixa() {
+    try {
+        const resposta = await fetch("/caixas/1/fechar", {
+            method: "POST",
+        });
+
+        const resultado = await resposta.json();
+
+        alert(resultado.mensagem);
+
+        caixaAtual = null;
+
+        if (statusCaixa) {
+            statusCaixa.textContent = "Caixa: Fechado";
+        }
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro ao fechar caixa.");
+    }
+}
 carregarProdutos();
 
 const btnPix = document.getElementById("btnPix");
@@ -229,17 +299,48 @@ const btnDinheiro = document.getElementById("btnDinheiro");
 const btnCartao = document.getElementById("btnCartao");
 const btnCancelar = document.getElementById("btnCancelar");
 const btnFinalizar = document.getElementById("btnFinalizar");
+const btnDesconto = document.getElementById("btnDesconto");
 
 const btnProduto = document.getElementById("btnProduto");
+const btnBuscar = document.getElementById("btnBuscar");
+const pesquisaProduto = document.getElementById("pesquisaProduto");
 
 const modalProdutos = document.getElementById("modalProdutos");
 const fecharModal = document.getElementById("fecharModal");
+const btnAbrirCaixa = document.getElementById("btnAbrirCaixa");
+const btnFecharCaixa = document.getElementById("btnFecharCaixa");
 
+const statusCaixa = document.getElementById("statusCaixa");
 btnProduto.addEventListener("click", () => {
     carregarProdutosModal();
     modalProdutos.style.display = "flex";
 });
+btnBuscar.addEventListener("click", () => {
+    carregarProdutosModal();
+    modalProdutos.style.display = "flex";
 
+    pesquisaProduto.value = "";
+    pesquisaProduto.focus();
+});
+pesquisaProduto.addEventListener("input", () => {
+    const texto = pesquisaProduto.value.toLowerCase();
+
+    const filtrados = produtos.filter((produto) => {
+        return (
+            produto.nome.toLowerCase().includes(texto) ||
+            (produto.codigo_barras || "").includes(texto) ||
+            (produto.categoria || "").toLowerCase().includes(texto)
+        );
+    });
+
+    carregarProdutosModal(filtrados);
+});
+modalProdutos.addEventListener("click", (e) => {
+    if (e.target === modalProdutos) {
+        modalProdutos.style.display = "none";
+        codigo.focus();
+    }
+});
 fecharModal.addEventListener("click", () => {
     modalProdutos.style.display = "none";
     codigo.focus();
@@ -262,3 +363,24 @@ btnCartao.addEventListener("click", () => {
 btnCancelar.addEventListener("click", cancelarVenda);
 
 btnFinalizar.addEventListener("click", finalizarVenda);
+btnDesconto.addEventListener("click", aplicarDesconto);
+
+if (btnAbrirCaixa) {
+    btnAbrirCaixa.addEventListener("click", abrirCaixa);
+}
+
+if (btnFecharCaixa) {
+    btnFecharCaixa.addEventListener("click", fecharCaixa);
+}
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        modalProdutos.style.display = "none";
+        codigo.focus();
+    }
+});
+modalProdutos.addEventListener("click", (e) => {
+    if (e.target === modalProdutos) {
+        modalProdutos.style.display = "none";
+        codigo.focus();
+    }
+});

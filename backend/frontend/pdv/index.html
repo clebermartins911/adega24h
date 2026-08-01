@@ -6,6 +6,8 @@
         <title>Adega24hSystem PDV</title>
 
         <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="css/modulos/modal-produtos.css" />
+        <link rel="stylesheet" href="css/modulos/modal-produtos.css" />
     </head>
     <!-- MODAL DE PRODUTOS -->
     <div id="modalProdutos" class="modal">
@@ -38,9 +40,11 @@
             <header class="topo">
                 <h1 class="titulo">ADEGA24HSYSTEM - PDV</h1>
 
-                <div class="caixa">Caixa: CX-01</div>
+                <div class="caixa">
+                    <span id="statusCaixa">Caixa: Fechado</span><br />
+                    <span id="funcionarioLogado">Funcionário: ---</span>
+                </div>
             </header>
-
             <!-- CONTEÚDO -->
             <main class="conteudo">
                 <!-- ESQUERDA -->
@@ -113,12 +117,16 @@
                     </div>
                 </aside>
             </main>
+            <div class="acoes-caixa">
+                <button id="btnAbrirCaixa">Abrir Caixa</button>
 
+                <button id="btnFecharCaixa">Fechar Caixa</button>
+            </div>
             <!-- RODAPÉ -->
             <footer class="atalhos">
                 <span id="btnProduto">F2 Produto</span>
-                <span>F3 Buscar</span>
-                <span>F4 Desconto</span>
+                <span id="btnBuscar">F3 Buscar</span>
+                <span id="btnDesconto">F4 Desconto</span>
 
                 <span id="btnPix">F5 PIX</span>
 
@@ -133,5 +141,6 @@
         </div>
 
         <script src="js/app.js"></script>
+        <script src="js/modulos/modal-produtos.js"></script>
     </body>
 </html>
