@@ -162,9 +162,6 @@ function carregarProdutosModal(lista = produtos) {
         });
 
         tabela.appendChild(tr);
-        console.log("Produtos carregados:", tabela.rows.length);
-        console.log("Altura da tabela:", tabela.scrollHeight);
-        console.log("Altura visível:", tabela.clientHeight);
     });
 }
 function aplicarDesconto() {
@@ -314,21 +311,15 @@ const btnFecharCaixa = document.getElementById("btnFecharCaixa");
 
 const statusCaixa = document.getElementById("statusCaixa");
 btnProduto.addEventListener("click", () => {
-    carregarProdutosModalV2();
-
-    modalProdutosV2.classList.add("ativo");
-
-    pesquisaProdutoV2.value = "";
-    pesquisaProdutoV2.focus();
+    carregarProdutosModal();
+    modalProdutos.style.display = "flex";
 });
-
 btnBuscar.addEventListener("click", () => {
-    carregarProdutosModalV2();
+    carregarProdutosModal();
+    modalProdutos.style.display = "flex";
 
-    modalProdutosV2.classList.add("ativo");
-
-    pesquisaProdutoV2.value = "";
-    pesquisaProdutoV2.focus();
+    pesquisaProduto.value = "";
+    pesquisaProduto.focus();
 });
 pesquisaProduto.addEventListener("input", () => {
     const texto = pesquisaProduto.value.toLowerCase();
@@ -389,62 +380,6 @@ document.addEventListener("keydown", (e) => {
 modalProdutos.addEventListener("click", (e) => {
     if (e.target === modalProdutos) {
         modalProdutos.style.display = "none";
-        codigo.focus();
-    }
-});
-// ===============================
-// MODAL PRODUTOS V2
-// ===============================
-
-const modalProdutosV2 = document.getElementById("modalProdutosV2");
-const listaProdutosV2 = document.getElementById("listaProdutosV2");
-const pesquisaProdutoV2 = document.getElementById("pesquisaProdutoV2");
-const fecharModalV2 = document.getElementById("fecharModalV2");
-
-function carregarProdutosModalV2(lista = produtos) {
-    listaProdutosV2.innerHTML = "";
-
-    lista.forEach((produto) => {
-        const linha = document.createElement("div");
-
-        linha.className = "linha-produto";
-
-        linha.innerHTML = `
-            <span>${produto.codigo_barras ?? "-"}</span>
-            <span>${produto.nome}</span>
-            <span>R$ ${Number(produto.preco).toFixed(2)}</span>
-            <span>${produto.estoque}</span>
-        `;
-
-        linha.addEventListener("dblclick", () => {
-            adicionarProduto(produto);
-
-            modalProdutosV2.classList.remove("ativo");
-
-            codigo.focus();
-        });
-
-        listaProdutosV2.appendChild(linha);
-    });
-}
-// Fechar no botão X
-fecharModalV2.addEventListener("click", () => {
-    modalProdutosV2.classList.remove("ativo");
-    codigo.focus();
-});
-
-// Fechar clicando fora
-modalProdutosV2.addEventListener("click", (e) => {
-    if (e.target === modalProdutosV2) {
-        modalProdutosV2.classList.remove("ativo");
-        codigo.focus();
-    }
-});
-
-// Fechar com ESC
-document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modalProdutosV2.classList.contains("ativo")) {
-        modalProdutosV2.classList.remove("ativo");
         codigo.focus();
     }
 });

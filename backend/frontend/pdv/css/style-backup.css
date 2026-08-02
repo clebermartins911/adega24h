@@ -270,7 +270,7 @@ tbody tr:nth-child(even) {
 }
 
 .modal-conteudo {
-    width: 950px;
+    width: 900px;
     max-width: 95%;
     max-height: 90vh;
     background: #1f2937;
@@ -279,7 +279,6 @@ tbody tr:nth-child(even) {
     color: #fff;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 .modal-topo {
@@ -314,7 +313,7 @@ tbody tr:nth-child(even) {
 .tabela-modal {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
+    background: #1f2937;
 }
 
 .tabela-modal thead {
@@ -324,31 +323,15 @@ tbody tr:nth-child(even) {
 
 .tabela-modal th,
 .tabela-modal td {
-    padding: 12px;
+    padding: 10px;
     border-bottom: 1px solid #444;
     text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.tabela-modal tbody {
-    display: block;
-    height: 420px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-.tabela-modal thead,
-.tabela-modal tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
 }
 
 .tabela-modal tbody tr {
     cursor: pointer;
     background: #1f2937;
-    color: #fff;
+    color: #ffffff;
 }
 
 .tabela-modal tbody tr:nth-child(even) {
@@ -359,15 +342,6 @@ tbody tr:nth-child(even) {
     background: #374151;
 }
 
-.tabela-modal tbody::-webkit-scrollbar {
-    width: 10px;
-}
-
-.tabela-modal tbody::-webkit-scrollbar-thumb {
-    background: #0b8f3a;
-    border-radius: 8px;
-}
-
-.tabela-modal tbody::-webkit-scrollbar-track {
-    background: #1f2937;
+.tabela-modal tbody td {
+    color: #ffffff;
 }
