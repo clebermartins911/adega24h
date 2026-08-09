@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="css/modulos/modal-produtos.css" />
         <link rel="stylesheet" href="css/modulos/modal-produtos.css" />
         <link rel="stylesheet" href="css/modal-produtos-v2.css" />
+        <link rel="stylesheet" href="css/troco.css" />
     </head>
     <!-- MODAL DE PRODUTOS -->
     <div id="modalProdutos" class="modal">
@@ -175,7 +176,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- ==========================
+         MODAL DE TROCO
+    ========================== -->
+
+        <div id="modalTroco" class="modal-troco">
+            <div class="modal-troco-conteudo">
+                <h2>Pagamento em Dinheiro</h2>
+
+                <div class="troco-total">
+                    Total da venda:
+                    <strong id="trocoTotalVenda">R$ 0,00</strong>
+                </div>
+
+                <label class="troco-label" for="valorRecebido"> Valor recebido: </label>
+
+                <input type="text" id="valorRecebido" placeholder="R$ 0,00" autocomplete="off" />
+
+                <div class="troco-resultado">
+                    <span>Troco:</span>
+
+                    <strong id="valorTroco"> R$ 0,00 </strong>
+
+                    <div id="mensagemTroco"></div>
+                </div>
+
+                <div class="troco-botoes">
+                    <button type="button" id="btnCancelarTroco">Cancelar</button>
+
+                    <button type="button" id="btnConfirmarTroco">Confirmar Pagamento</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCRIPTS -->
         <script src="js/app.js"></script>
         <script src="js/modulos/modal-produtos.js"></script>
+        <script src="js/troco.js"></script>
     </body>
 </html>

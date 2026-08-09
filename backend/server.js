@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-
+const listEndpoints = require("express-list-endpoints");
 const systemConfig = require("./core/config/systemConfig");
 const storeConfig = require("./core/config/storeConfig");
 const businessConfig = require("./core/config/businessConfig");
@@ -38,7 +38,11 @@ app.get("/admin", (req, res) => {
 app.get("/pdv", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "pdv", "index.html"));
 });
-
+app.get("/abc", (req, res) => {
+    res.json({
+        ok: true,
+    });
+});
 // ===============================
 // ROTAS DO SISTEMA
 // ===============================
@@ -56,7 +60,8 @@ const autoRoutes = require("./routes/auto");
 const alertRoutes = require("./routes/alerts");
 const caixaRoutes = require("./routes/caixas");
 const adminRoutes = require("./routes/admin");
-
+const employeeRoutes = require("./routes/employees");
+console.log("employeeRoutes =", employeeRoutes);
 // Módulos
 
 const cartRoutes = require("./modules/cart/routes");
@@ -87,6 +92,11 @@ app.use("/auto", autoRoutes);
 app.use("/alerts", alertRoutes);
 app.use("/caixas", caixaRoutes);
 app.use("/admin", adminRoutes);
+app.use("/employees", employeeRoutes);
+app.get("/employees-teste", (req, res) => {
+    res.json({ ok: true });
+});
+console.log("ROTA /employees REGISTRADA");
 
 // Carrinho
 
@@ -132,6 +142,14 @@ app.get("/teste", (req, res) => {
 // INICIALIZAÇÃO
 // ===============================
 
+console.log("===== ROTAS =====");
+
+console.table(
+    listEndpoints(app).map((r) => ({
+        path: r.path,
+        methods: r.methods.join(","),
+    }))
+);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

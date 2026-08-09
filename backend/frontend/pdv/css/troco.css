@@ -1,0 +1,166 @@
+/* ==========================================
+   Adega24hSystem - Modal de Troco
+   ========================================== */
+
+.modal-troco {
+    display: none;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+}
+
+.modal-troco.ativo {
+    display: flex;
+}
+
+.modal-troco-conteudo {
+    width: 420px;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+
+    text-align: center;
+}
+
+.modal-troco-conteudo h2 {
+    margin-top: 0;
+
+    font-size: 26px;
+}
+
+.troco-total {
+    font-size: 20px;
+
+    margin: 15px 0;
+}
+
+.troco-total strong {
+    display: block;
+
+    font-size: 28px;
+
+    margin-top: 5px;
+}
+
+.troco-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-weight: bold;
+
+    text-align: left;
+}
+
+#valorRecebido {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 14px;
+
+    font-size: 24px;
+
+    text-align: center;
+
+    border: 2px solid #0a8f3c;
+
+    border-radius: 8px;
+
+    outline: none;
+}
+
+.troco-resultado {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 8px;
+
+    background: #f1f1f1;
+}
+
+.troco-resultado span {
+    display: block;
+}
+
+#valorTroco {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 36px;
+
+    font-weight: bold;
+
+    color: #0a8f3c;
+}
+
+.troco-ok {
+    margin-top: 10px;
+
+    color: #0a8f3c;
+
+    font-weight: bold;
+}
+
+.troco-erro {
+    margin-top: 10px;
+
+    color: #c62828;
+
+    font-weight: bold;
+}
+
+.troco-botoes {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+.troco-botoes button {
+    flex: 1;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    font-weight: bold;
+}
+
+#btnConfirmarTroco {
+    background: #0a8f3c;
+
+    color: white;
+}
+
+#btnCancelarTroco {
+    background: #777;
+
+    color: white;
+}

@@ -236,6 +236,7 @@ async function finalizarVenda() {
         }
 
         alert("Venda realizada com sucesso!");
+        await carregarProdutos();
 
         carrinho = [];
         valorTotal = 0;
