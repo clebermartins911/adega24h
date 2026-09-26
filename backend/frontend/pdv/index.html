@@ -44,7 +44,7 @@
 
                 <div class="caixa">
                     <span id="statusCaixa">Caixa: Fechado</span><br />
-                    <span id="funcionarioLogado">Funcionário: ---</span>
+                    <button id="funcionarioLogado" type="button">Funcionário: ---</button>
                 </div>
             </header>
             <!-- CONTEÚDO -->
@@ -209,10 +209,63 @@
                 </div>
             </div>
         </div>
+        <!-- ==========================
+     MODAL DE LOGIN DO FUNCIONÁRIO
+========================== -->
 
-        <!-- SCRIPTS -->
-        <script src="js/app.js"></script>
-        <script src="js/modulos/modal-produtos.js"></script>
-        <script src="js/troco.js"></script>
-    </body>
+        <div id="modalFuncionario" class="modal-funcionario">
+            <div class="modal-funcionario-conteudo">
+                <div class="modal-funcionario-header">
+                    <h2>Login do Funcionário</h2>
+
+                    <button
+                        type="button"
+                        onclick="fecharModalFuncionario()"
+                        class="btn-fechar-funcionario"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <div class="login-funcionario">
+                    <label for="usuarioFuncionario"> Usuário </label>
+
+                    <input
+                        type="text"
+                        id="usuarioFuncionario"
+                        placeholder="Digite o usuário"
+                        autocomplete="username"
+                    />
+
+                    <label for="senhaFuncionario"> Senha </label>
+
+                    <input
+                        type="password"
+                        id="senhaFuncionario"
+                        placeholder="Digite a senha"
+                        autocomplete="current-password"
+                    />
+
+                    <p id="erroLoginFuncionario" class="erro-login-funcionario"></p>
+
+                    <button type="button" id="btnLoginFuncionario" class="btn-login-funcionario">
+                        Entrar
+                    </button>
+                </div>
+
+                <div class="modal-funcionario-footer">
+                    <button
+                        type="button"
+                        onclick="fecharModalFuncionario()"
+                        class="btn-cancelar-funcionario"
+                    >
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+            <script src="js/loginFuncionario.js"></script>`r`n</body>
 </html>
+
+
+

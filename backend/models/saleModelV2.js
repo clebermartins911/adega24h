@@ -1,14 +1,14 @@
 const db = require("../database");
 
 const saleModelV2 = {
-    criarVenda(cliente_id, valor_total, forma_pagamento, callback) {
+    criarVenda(cliente_id, funcionario_id, valor_total, forma_pagamento, callback) {
         const sql = `
             INSERT INTO sales_v2
-            (cliente_id, valor_total, forma_pagamento)
-            VALUES (?, ?, ?)
+           (cliente_id, funcionario_id, valor_total, forma_pagamento)
+VALUES (?, ?, ?, ?)
         `;
 
-        db.run(sql, [cliente_id, valor_total, forma_pagamento], function (err) {
+        db.run(sql, [cliente_id, funcionario_id, valor_total, forma_pagamento], function (err) {
             if (err) return callback(err);
 
             callback(null, this.lastID);

@@ -2,7 +2,7 @@ const saleModelV2 = require("../models/saleModelV2");
 const stockModel = require("../models/stockModel");
 
 function criarVenda(dadosVenda, callback) {
-    const { cliente_id = null, forma_pagamento, itens } = dadosVenda;
+    const { cliente_id = null, funcionario_id = null, forma_pagamento, itens } = dadosVenda;
 
     // Validação do carrinho
     if (!Array.isArray(itens) || itens.length === 0) {
@@ -32,25 +32,31 @@ function criarVenda(dadosVenda, callback) {
         });
 
         // Cria a venda
-        saleModelV2.criarVenda(cliente_id, valorTotal, forma_pagamento, function (err, saleId) {
-            if (err) {
-                return callback(err);
-            }
-
-            salvarItens(saleId, produtosValidados, 0, function (erroSalvar) {
-                if (erroSalvar) {
-                    return callback(erroSalvar);
+        saleModelV2.criarVenda(
+            cliente_id,
+            funcionario_id,
+            valorTotal,
+            forma_pagamento,
+            function (err, saleId) {
+                if (err) {
+                    return callback(err);
                 }
 
-                callback(null, {
-                    sucesso: true,
-                    sale_id: saleId,
-                    valor_total: valorTotal,
-                    itens: produtosValidados.length,
-                    mensagem: "Venda realizada com sucesso.",
+                salvarItens(saleId, produtosValidados, 0, function (erroSalvar) {
+                    if (erroSalvar) {
+                        return callback(erroSalvar);
+                    }
+
+                    callback(null, {
+                        sucesso: true,
+                        sale_id: saleId,
+                        valor_total: valorTotal,
+                        itens: produtosValidados.length,
+                        mensagem: "Venda realizada com sucesso.",
+                    });
                 });
-            });
-        });
+            }
+        );
     });
 }
 

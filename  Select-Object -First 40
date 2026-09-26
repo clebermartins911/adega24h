@@ -1,0 +1,1266 @@
+[1mdiff --git a/backend/frontend/pdv/js/app.js b/backend/frontend/pdv/js/app.js[m
+[1mindex af49c69..91b1899 100644[m
+[1m--- a/backend/frontend/pdv/js/app.js[m
+[1m+++ b/backend/frontend/pdv/js/app.js[m
+[36m@@ -1,451 +1,952 @@[m
+[31m-// ======================================[m
+[31m-// Adega24hSystem - PDV[m
+[31m-// ======================================[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ADEGA24HSYSTEM - PDV[m
+[32m+[m[32m// app.js[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-// Elementos da tela[m
+[31m-const codigo = document.getElementById("codigo");[m
+[32m+[m[32m"use strict";[m
+ [m
+[31m-const nomeProduto = document.getElementById("nomeProduto");[m
+[31m-const codigoProduto = document.getElementById("codigoProduto");[m
+[31m-const precoProduto = document.getElementById("precoProduto");[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ESTADO DO PDV[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-const listaItens = document.getElementById("listaItens");[m
+[31m-[m
+[31m-const totalVenda = document.getElementById("totalVenda");[m
+[31m-const quantidadeItens = document.getElementById("quantidadeItens");[m
+[31m-const resumoVenda = document.getElementById("resumoVenda");[m
+[32m+[m[32mlet carrinho = [];[m
+ let produtos = [];[m
+[32m+[m[32mlet funcionarioAtual = null;[m
+[32m+[m[32mlet caixaAtual = null;[m
+[32m+[m[32mlet formaPagamentoAtual = null;[m
+[32m+[m[32mlet descontoAtual = 0;[m
+[32m+[m[32mlet vendaEmProcessamento = false;[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// INICIALIZAÇÃO[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mdocument.addEventListener("DOMContentLoaded", async () => {[m
+[32m+[m[32m    console.log("=================================");[m
+[32m+[m[32m    console.log("PDV iniciado");[m
+[32m+[m[32m    console.log("=================================");[m
+[32m+[m
+[32m+[m[32m    try {[m
+[32m+[m[32m        await carregarProdutos();[m
+[32m+[m[32m        await carregarFuncionarios();[m
+[32m+[m[32m        await carregarCaixaAtual();[m
+[32m+[m
+[32m+[m[32m        configurarEventos();[m
+[32m+[m[32m        atualizarCarrinho();[m
+[32m+[m[32m        atualizarFuncionarioNaTela();[m
+[32m+[m[32m        atualizarCaixaNaTela();[m
+[32m+[m
+[32m+[m[32m        console.log("PDV carregado com sucesso.");[m
+[32m+[m[32m    } catch (erro) {[m
+[32m+[m[32m        console.error("Erro ao iniciar PDV:", erro);[m
+[32m+[m[32m    }[m
+[32m+[m[32m});[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// EVENTOS[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction configurarEventos() {[m
+[32m+[m[32m    // FUNCIONÁRIO[m
+[32m+[m[32m    const btnFuncionario = document.getElementById("btnFuncionario");[m
+[32m+[m
+[32m+[m[32m    if (btnFuncionario) {[m
+[32m+[m[32m        btnFuncionario.addEventListener("click", abrirModalFuncionario);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // CANCELAR VENDA[m
+[32m+[m[32m    const btnCancelarVenda = document.getElementById("btnCancelarVenda");[m
+[32m+[m
+[32m+[m[32m    if (btnCancelarVenda) {[m
+[32m+[m[32m        btnCancelarVenda.addEventListener("click", cancelarVenda);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // FINALIZAR VENDA[m
+[32m+[m[32m    const btnFinalizarVenda = document.getElementById("btnFinalizarVenda");[m
+[32m+[m
+[32m+[m[32m    if (btnFinalizarVenda) {[m
+[32m+[m[32m        btnFinalizarVenda.addEventListener("click", finalizarVenda);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // DINHEIRO[m
+[32m+[m[32m    const btnDinheiro = document.getElementById("btnDinheiro");[m
+[32m+[m
+[32m+[m[32m    if (btnDinheiro) {[m
+[32m+[m[32m        btnDinheiro.addEventListener("click", () => {[m
+[32m+[m[32m            formaPagamentoAtual = "DINHEIRO";[m
+[32m+[m[32m            abrirModalTroco();[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // PIX[m
+[32m+[m[32m    const btnPix = document.getElementById("btnPix");[m
+[32m+[m
+[32m+[m[32m    if (btnPix) {[m
+[32m+[m[32m        btnPix.addEventListener("click", () => {[m
+[32m+[m[32m            formaPagamentoAtual = "PIX";[m
+[32m+[m[32m            finalizarVenda();[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // CARTÃO[m
+[32m+[m[32m    const btnCartao = document.getElementById("btnCartao");[m
+[32m+[m
+[32m+[m[32m    if (btnCartao) {[m
+[32m+[m[32m        btnCartao.addEventListener("click", () => {[m
+[32m+[m[32m            formaPagamentoAtual = "CARTAO";[m
+[32m+[m[32m            finalizarVenda();[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// FUNCIONÁRIOS[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32masync function carregarFuncionarios() {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m        const resposta = await fetch("/employees");[m
+[32m+[m
+[32m+[m[32m        if (!resposta.ok) {[m
+[32m+[m[32m            throw new Error(`Erro ao buscar funcionários: HTTP ${resposta.status}`);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        const dados = await resposta.json();[m
+[32m+[m
+[32m+[m[32m        funcionarios = Array.isArray(dados) ? dados : dados.funcionarios || dados.data || [];[m
+[32m+[m
+[32m+[m[32m        console.log("Funcionários carregados:", funcionarios);[m
+[32m+[m[32m    } catch (erro) {[m
+[32m+[m[32m        console.error("Erro ao carregar funcionários:", erro);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// variável global para lista de funcionários[m
+[32m+[m[32mlet funcionarios = [];[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ABRIR MODAL DE FUNCIONÁRIO[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction abrirModalFuncionario() {[m
+[32m+[m[32m    const modal = document.getElementById("modalFuncionario");[m
+[32m+[m
+[32m+[m[32m    if (!modal) {[m
+[32m+[m[32m        console.error("Modal de funcionário não encontrado: #modalFuncionario");[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    const lista = document.getElementById("listaFuncionarios");[m
+[32m+[m
+[32m+[m[32m    if (!lista) {[m
+[32m+[m[32m        console.error("Lista de funcionários não encontrada: #listaFuncionarios");[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    lista.innerHTML = "";[m
+[32m+[m
+[32m+[m[32m    if (!funcionarios.length) {[m
+[32m+[m[32m        lista.innerHTML = `[m
+[32m+[m[32m            <div class="mensagem-vazia">[m
+[32m+[m[32m                Nenhum funcionário encontrado.[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m        `;[m
+[32m+[m
+[32m+[m[32m        modal.style.display = "flex";[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    funcionarios.forEach((funcionario) => {[m
+[32m+[m[32m        const id = funcionario.id ?? funcionario.funcionario_id;[m
+[32m+[m
+[32m+[m[32m        const nome =[m
+[32m+[m[32m            funcionario.nome ||[m
+[32m+[m[32m            funcionario.name ||[m
+[32m+[m[32m            funcionario.nome_completo ||[m
+[32m+[m[32m            `Funcionário ${id}`;[m
+[32m+[m
+[32m+[m[32m        const item = document.createElement("button");[m
+[32m+[m
+[32m+[m[32m        item.type = "button";[m
+[32m+[m[32m        item.className = "funcionario-item";[m
+[32m+[m
+[32m+[m[32m        item.dataset.id = id;[m
+[32m+[m
+[32m+[m[32m        item.innerHTML = `[m
+[32m+[m[32m            <strong>${escaparHTML(nome)}</strong>[m
+[32m+[m[32m            <span>ID: ${escaparHTML(String(id))}</span>[m
+[32m+[m[32m        `;[m
+[32m+[m
+[32m+[m[32m        item.addEventListener("click", () => {[m
+[32m+[m[32m            selecionarFuncionario(funcionario);[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        lista.appendChild(item);[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m    modal.style.display = "flex";[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// SELECIONAR FUNCIONÁRIO[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction selecionarFuncionario(funcionario) {[m
+[32m+[m[32m    if (!funcionario) {[m
+[32m+[m[32m        console.error("Funcionário inválido.");[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    const id = funcionario.id ?? funcionario.funcionario_id;[m
+[32m+[m
+[32m+[m[32m    const nome =[m
+[32m+[m[32m        funcionario.nome || funcionario.name || funcionario.nome_completo || `Funcionário ${id}`;[m
+[32m+[m
+[32m+[m[32m    funcionarioAtual = {[m
+[32m+[m[32m        id: id,[m
+[32m+[m[32m        nome: nome,[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    console.log("Funcionário selecionado:", funcionarioAtual);[m
+[32m+[m
+[32m+[m[32m    localStorage.setItem("funcionarioPDV", JSON.stringify(funcionarioAtual));[m
+[32m+[m
+[32m+[m[32m    atualizarFuncionarioNaTela();[m
+[32m+[m
+[32m+[m[32m    fecharModalFuncionario();[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// FUNCIONÁRIO SALVO[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction recuperarFuncionarioSalvo() {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m        const salvo = localStorage.getItem("funcionarioPDV");[m
+[32m+[m
+[32m+[m[32m        if (!salvo) {[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        const funcionario = JSON.parse(salvo);[m
+[32m+[m
+[32m+[m[32m        if (funcionario && funcionario.id) {[m
+[32m+[m[32m            funcionarioAtual = funcionario;[m
+[32m+[m
+[32m+[m[32m            console.log("Funcionário recuperado:", funcionarioAtual);[m
+[32m+[m
+[32m+[m[32m            atualizarFuncionarioNaTela();[m
+[32m+[m[32m        }[m
+[32m+[m[32m    } catch (erro) {[m
+[32m+[m[32m        console.error("Erro ao recuperar funcionário:", erro);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ATUALIZAR FUNCIONÁRIO NA TELA[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction atualizarFuncionarioNaTela() {[m
+[32m+[m[32m    const elemento =[m
+[32m+[m[32m        document.getElementById("funcionarioAtual") || document.getElementById("nomeFuncionario");[m
+[32m+[m
+[32m+[m[32m    if (!elemento) {[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    if (!funcionarioAtual) {[m
+[32m+[m[32m        elemento.textContent = "Nenhum funcionário selecionado";[m
+[32m+[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    elemento.textContent = `${funcionarioAtual.nome} (#${funcionarioAtual.id})`;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// FECHAR MODAL FUNCIONÁRIO[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction fecharModalFuncionario() {[m
+[32m+[m[32m    const modal = document.getElementById("modalFuncionario");[m
+[32m+[m
+[32m+[m[32m    if (modal) {[m
+[32m+[m[32m        modal.style.display = "none";[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// PRODUTOS[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+ async function carregarProdutos() {[m
+     try {[m
+         const resposta = await fetch("/products");[m
+ [m
+[31m-        produtos = await resposta.json();[m
+[32m+[m[32m        if (!resposta.ok) {[m
+[32m+[m[32m            throw new Error(`Erro ao buscar produtos: HTTP ${resposta.status}`);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        const dados = await resposta.json();[m
+ [m
+[31m-        console.log(produtos);[m
+[32m+[m[32m        produtos = Array.isArray(dados)[m
+[32m+[m[32m            ? dados[m
+[32m+[m[32m            : dados.produtos || dados.products || dados.data || [];[m
+ [m
+[31m-        console.log(`${produtos.length} produtos carregados.`);[m
+[32m+[m[32m        console.log("Produtos carregados:", produtos.length);[m
+     } catch (erro) {[m
+         console.error("Erro ao carregar produtos:", erro);[m
+     }[m
+ }[m
+[31m-// Carrinho[m
+[31m-let carrinho = [];[m
+[31m-let valorTotal = 0;[m
+[31m-let formaPagamento = "PIX";[m
+[31m-let caixaAtual = null;[m
+[31m-let funcionarioAtual = null;[m
+[31m-let desconto = 0;[m
+[31m-// Foco no leitor[m
+[31m-codigo.focus();[m
+ [m
+[31m-// Enter[m
+[31m-codigo.addEventListener("keydown", function (e) {[m
+[31m-    if (e.key !== "Enter") return;[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ADICIONAR PRODUTO AO CARRINHO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-    e.preventDefault();[m
+[32m+[m[32mfunction adicionarProduto(produto) {[m
+[32m+[m[32m    if (!produto) {[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+ [m
+[31m-    adicionarProduto(codigo.value.trim());[m
+[32m+[m[32m    const produtoId = produto.id ?? produto.produto_id;[m
+ [m
+[31m-    codigo.value = "";[m
+[32m+[m[32m    const estoque = Number(produto.estoque ?? produto.quantidade_estoque ?? produto.stock ?? 0);[m
+ [m
+[31m-    codigo.focus();[m
+[31m-});[m
+[32m+[m[32m    if (estoque <= 0) {[m
+[32m+[m[32m        alert("Produto sem estoque.");[m
+ [m
+[31m-// Adiciona produto[m
+[31m-function adicionarProduto(dados) {[m
+[31m-    if (!dados) return;[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    const existente = carrinho.find((item) => item.produto_id === produtoId);[m
+ [m
+[31m-    if (typeof dados !== "object") {[m
+[31m-        dados = produtos.find((produto) => produto.codigo_barras === dados);[m
+[32m+[m[32m    if (existente) {[m
+[32m+[m[32m        if (existente.quantidade >= estoque) {[m
+[32m+[m[32m            alert("Quantidade maior que o estoque disponível.");[m
+ [m
+[31m-        if (!dados) {[m
+[31m-            alert("Produto não encontrado!");[m
+             return;[m
+         }[m
+[31m-    }[m
+ [m
+[31m-    let produto = carrinho.find((p) => p.produto_id === dados.id);[m
+[31m-[m
+[31m-    if (produto) {[m
+[31m-        produto.quantidade++;[m
+[32m+[m[32m        existente.quantidade++;[m
+     } else {[m
+[31m-        produto = {[m
+[31m-            produto_id: dados.id,[m
+[31m-            codigo: dados.codigo_barras,[m
+[31m-            nome: dados.nome,[m
+[31m-            preco: Number(dados.preco),[m
+[32m+[m[32m        carrinho.push({[m
+[32m+[m[32m            produto_id: produtoId,[m
+[32m+[m
+[32m+[m[32m            nome: produto.nome || produto.name || "Produto",[m
+[32m+[m
+[32m+[m[32m            preco: Number(produto.preco ?? produto.valor ?? produto.price ?? 0),[m
+[32m+[m
+             quantidade: 1,[m
+[31m-        };[m
+ [m
+[31m-        carrinho.push(produto);[m
+[32m+[m[32m            estoque: estoque,[m
+[32m+[m[32m        });[m
+     }[m
+ [m
+[31m-    nomeProduto.textContent = produto.nome;[m
+[31m-    codigoProduto.textContent = produto.codigo ?? "-";[m
+[31m-    precoProduto.textContent = "R$ " + produto.preco.toFixed(2);[m
+[32m+[m[32m    atualizarCarrinho();[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// REMOVER PRODUTO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-    atualizarTabela();[m
+[32m+[m[32mfunction removerProduto(produtoId) {[m
+[32m+[m[32m    carrinho = carrinho.filter((item) => item.produto_id !== produtoId);[m
+[32m+[m
+[32m+[m[32m    atualizarCarrinho();[m
+ }[m
+[31m-// Atualiza resumo da venda[m
+[31m-function atualizarResumoVenda() {[m
+[31m-    resumoVenda.innerHTML = "";[m
+ [m
+[31m-    if (carrinho.length === 0) {[m
+[31m-        resumoVenda.innerHTML = "Nenhum item.";[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ALTERAR QUANTIDADE[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction alterarQuantidade(produtoId, quantidade) {[m
+[32m+[m[32m    const item = carrinho.find((produto) => produto.produto_id === produtoId);[m
+[32m+[m
+[32m+[m[32m    if (!item) {[m
+         return;[m
+     }[m
+ [m
+[31m-    carrinho.forEach((item) => {[m
+[31m-        const linha = document.createElement("div");[m
+[32m+[m[32m    quantidade = Number(quantidade);[m
+ [m
+[31m-        linha.className = "resumo-linha";[m
+[32m+[m[32m    if (quantidade <= 0) {[m
+[32m+[m[32m        removerProduto(produtoId);[m
+ [m
+[31m-        linha.innerHTML = `[m
+[31m-            <span>${item.quantidade}x ${item.nome}</span>[m
+[31m-            <span>R$ ${(item.preco * item.quantidade).toFixed(2)}</span>[m
+[31m-        `;[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+ [m
+[31m-        resumoVenda.appendChild(linha);[m
+[31m-    });[m
+[31m-}[m
+[31m-// Atualiza tabela[m
+[31m-function atualizarTabela() {[m
+[31m-    listaItens.innerHTML = "";[m
+[32m+[m[32m    if (item.estoque && quantidade > item.estoque) {[m
+[32m+[m[32m        alert("Quantidade maior que o estoque disponível.");[m
+ [m
+[31m-    valorTotal = 0;[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+ [m
+[31m-    carrinho.forEach((item, indice) => {[m
+[31m-        const totalItem = item.preco * item.quantidade;[m
+[32m+[m[32m    item.quantidade = quantidade;[m
+ [m
+[31m-        valorTotal += totalItem;[m
+[32m+[m[32m    atualizarCarrinho();[m
+[32m+[m[32m}[m
+ [m
+[31m-        const tr = document.createElement("tr");[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// TOTAL DO CARRINHO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-        tr.innerHTML = `[m
+[31m-            <td>${indice + 1}</td>[m
+[31m-            <td>${item.nome}</td>[m
+[31m-            <td>${item.quantidade}</td>[m
+[31m-            <td>R$ ${item.preco.toFixed(2)}</td>[m
+[31m-            <td>R$ ${totalItem.toFixed(2)}</td>[m
+[31m-        `;[m
+[32m+[m[32mfunction calcularSubtotal() {[m
+[32m+[m[32m    return carrinho.reduce((total, item) => {[m
+[32m+[m[32m        return total + Number(item.preco) * Number(item.quantidade);[m
+[32m+[m[32m    }, 0);[m
+[32m+[m[32m}[m
+ [m
+[31m-        listaItens.appendChild(tr);[m
+[31m-    });[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// DESCONTO[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction calcularTotalVenda() {[m
+[32m+[m[32m    const subtotal = calcularSubtotal();[m
+ [m
+[31m-    const totalComDesconto = Math.max(0, valorTotal - desconto);[m
+[32m+[m[32m    const desconto = Number(descontoAtual) || 0;[m
+ [m
+[31m-    totalVenda.textContent = "R$ " + totalComDesconto.toFixed(2);[m
+[31m-    quantidadeItens.textContent = carrinho.length;[m
+[31m-    atualizarResumoVenda();[m
+[32m+[m[32m    const total = subtotal - desconto;[m
+[32m+[m
+[32m+[m[32m    return Math.max(total, 0);[m
+ }[m
+[31m-function carregarProdutosModal(lista = produtos) {[m
+[31m-    const tabela = document.getElementById("listaProdutosModal");[m
+ [m
+[31m-    tabela.innerHTML = "";[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ATUALIZAR CARRINHO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-    lista.forEach((produto) => {[m
+[31m-        const tr = document.createElement("tr");[m
+[32m+[m[32mfunction atualizarCarrinho() {[m
+[32m+[m[32m    const lista = document.getElementById("listaCarrinho") || document.getElementById("carrinho");[m
+ [m
+[31m-        tr.innerHTML = `[m
+[31m-            <td>${produto.codigo_barras ?? "-"}</td>[m
+[31m-            <td>${produto.nome}</td>[m
+[31m-            <td>R$ ${Number(produto.preco).toFixed(2)}</td>[m
+[31m-            <td>${produto.estoque}</td>[m
+[31m-        `;[m
+[32m+[m[32m    if (lista) {[m
+[32m+[m[32m        lista.innerHTML = "";[m
+ [m
+[31m-        tr.addEventListener("dblclick", () => {[m
+[31m-            adicionarProduto(produto);[m
+[32m+[m[32m        carrinho.forEach((item) => {[m
+[32m+[m[32m            const linha = document.createElement("div");[m
+ [m
+[31m-            modalProdutos.style.display = "none";[m
+[32m+[m[32m            linha.className = "item-carrinho";[m
+ [m
+[31m-            codigo.focus();[m
+[32m+[m[32m            linha.innerHTML = `[m
+[32m+[m
+[32m+[m[32m                <div class="produto-carrinho">[m
+[32m+[m
+[32m+[m[32m                    <strong>[m
+[32m+[m[32m                        ${escaparHTML(item.nome)}[m
+[32m+[m[32m                    </strong>[m
+[32m+[m
+[32m+[m[32m                    <span>[m
+[32m+[m[32m                        R$ ${formatarMoeda(item.preco)}[m
+[32m+[m[32m                    </span>[m
+[32m+[m
+[32m+[m[32m                </div>[m
+[32m+[m
+[32m+[m[32m                <div class="quantidade-carrinho">[m
+[32m+[m
+[32m+[m[32m                    <button[m
+[32m+[m[32m                        type="button"[m
+[32m+[m[32m                        onclick="alterarQuantidade(${item.produto_id}, ${item.quantidade - 1})"[m
+[32m+[m[32m                    >[m
+[32m+[m[32m                        -[m
+[32m+[m[32m                    </button>[m
+[32m+[m
+[32m+[m[32m                    <span>[m
+[32m+[m[32m                        ${item.quantidade}[m
+[32m+[m[32m                    </span>[m
+[32m+[m
+[32m+[m[32m                    <button[m
+[32m+[m[32m                        type="button"[m
+[32m+[m[32m                        onclick="alterarQuantidade(${item.produto_id}, ${item.quantidade + 1})"[m
+[32m+[m[32m                    >[m
+[32m+[m[32m                        +[m
+[32m+[m[32m                    </button>[m
+[32m+[m
+[32m+[m[32m                </div>[m
+[32m+[m
+[32m+[m[32m                <strong>[m
+[32m+[m[32m                    R$ ${formatarMoeda(item.preco * item.quantidade)}[m
+[32m+[m[32m                </strong>[m
+[32m+[m
+[32m+[m[32m                <button[m
+[32m+[m[32m                    type="button"[m
+[32m+[m[32m                    onclick="removerProduto(${item.produto_id})"[m
+[32m+[m[32m                >[m
+[32m+[m[32m                    ×[m
+[32m+[m[32m                </button>[m
+[32m+[m[32m            `;[m
+[32m+[m
+[32m+[m[32m            lista.appendChild(linha);[m
+         });[m
+[32m+[m[32m    }[m
+ [m
+[31m-        tabela.appendChild(tr);[m
+[31m-        console.log("Produtos carregados:", tabela.rows.length);[m
+[31m-        console.log("Altura da tabela:", tabela.scrollHeight);[m
+[31m-        console.log("Altura visível:", tabela.clientHeight);[m
+[31m-    });[m
+[32m+[m[32m    atualizarTotais();[m
+ }[m
+[31m-function aplicarDesconto() {[m
+[31m-    const valor = prompt("Informe o desconto em R$");[m
+ [m
+[31m-    if (valor === null) return;[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ATUALIZAR TOTAIS[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-    const descontoInformado = Number(valor.replace(",", "."));[m
+[32m+[m[32mfunction atualizarTotais() {[m
+[32m+[m[32m    const subtotal = calcularSubtotal();[m
+[32m+[m[32m    const total = calcularTotalVenda();[m
+ [m
+[31m-    if (isNaN(descontoInformado) || descontoInformado < 0) {[m
+[31m-        alert("Valor de desconto inválido.");[m
+[31m-        return;[m
+[32m+[m[32m    const elementoSubtotal = document.getElementById("subtotal");[m
+[32m+[m
+[32m+[m[32m    const elementoDesconto = document.getElementById("desconto");[m
+[32m+[m
+[32m+[m[32m    const elementoTotal =[m
+[32m+[m[32m        document.getElementById("totalVenda") || document.getElementById("valorTotal");[m
+[32m+[m
+[32m+[m[32m    if (elementoSubtotal) {[m
+[32m+[m[32m        elementoSubtotal.textContent = `R$ ${formatarMoeda(subtotal)}`;[m
+     }[m
+ [m
+[31m-    desconto = descontoInformado;[m
+[32m+[m[32m    if (elementoDesconto) {[m
+[32m+[m[32m        elementoDesconto.textContent = `R$ ${formatarMoeda(descontoAtual)}`;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    if (elementoTotal) {[m
+[32m+[m[32m        elementoTotal.textContent = `R$ ${formatarMoeda(total)}`;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// DESCONTO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-    atualizarTabela();[m
+[32m+[m[32mfunction definirDesconto(valor) {[m
+[32m+[m[32m    descontoAtual = Number(valor) || 0;[m
+ [m
+[31m-    alert("Desconto aplicado com sucesso!");[m
+[32m+[m[32m    atualizarTotais();[m
+ }[m
+[31m-function cancelarVenda() {[m
+[31m-    carrinho = [];[m
+[31m-    valorTotal = 0;[m
+ [m
+[31m-    atualizarTabela();[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// CAIXA[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32masync function carregarCaixaAtual() {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m        const resposta = await fetch("/caixas");[m
+[32m+[m
+[32m+[m[32m        if (!resposta.ok) {[m
+[32m+[m[32m            console.warn("Não foi possível carregar caixas.");[m
+[32m+[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        const dados = await resposta.json();[m
+[32m+[m
+[32m+[m[32m        const caixas = Array.isArray(dados) ? dados : dados.caixas || dados.data || [];[m
+[32m+[m
+[32m+[m[32m        caixaAtual =[m
+[32m+[m[32m            caixas.find((caixa) => String(caixa.status).toUpperCase() === "ABERTO") || null;[m
+[32m+[m
+[32m+[m[32m        console.log("Caixa atual:", caixaAtual);[m
+[32m+[m
+[32m+[m[32m        atualizarCaixaNaTela();[m
+[32m+[m[32m    } catch (erro) {[m
+[32m+[m[32m        console.error("Erro ao carregar caixa:", erro);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// ATUALIZAR CAIXA NA TELA[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction atualizarCaixaNaTela() {[m
+[32m+[m[32m    const elemento = document.getElementById("caixaAtual");[m
+[32m+[m
+[32m+[m[32m    if (!elemento) {[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    if (!caixaAtual) {[m
+[32m+[m[32m        elemento.textContent = "Nenhum caixa aberto";[m
+ [m
+[31m-    nomeProduto.textContent = "-";[m
+[31m-    codigoProduto.textContent = "-";[m
+[31m-    precoProduto.textContent = "R$ 0,00";[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+ [m
+[31m-    codigo.value = "";[m
+[31m-    codigo.focus();[m
+[32m+[m[32m    elemento.textContent = caixaAtual.nome || caixaAtual.codigo || `Caixa ${caixaAtual.id}`;[m
+ }[m
+[31m-// Finaliza a venda[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// FINALIZAR VENDA[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+ async function finalizarVenda() {[m
+[31m-    if (carrinho.length === 0) {[m
+[31m-        alert("Carrinho vazio!");[m
+[32m+[m[32m    if (vendaEmProcessamento) {[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    if (!funcionarioAtual) {[m
+[32m+[m[32m        alert("Selecione o funcionário antes de finalizar a venda.");[m
+[32m+[m
+[32m+[m[32m        abrirModalFuncionario();[m
+[32m+[m
+         return;[m
+     }[m
+[32m+[m
+     if (!caixaAtual) {[m
+[31m-        alert("Abra o caixa antes de realizar uma venda.");[m
+[32m+[m[32m        alert("Não existe caixa aberto para realizar a venda.");[m
+[32m+[m
+         return;[m
+     }[m
+[31m-    const venda = {[m
+[31m-        cliente_id: null,[m
+[31m-        caixa_id: caixaAtual,[m
+[31m-        funcionario_id: funcionarioAtual,[m
+[31m-        desconto: desconto,[m
+[31m-        forma_pagamento: formaPagamento,[m
+[31m-        itens: carrinho.map((item) => ({[m
+[31m-            produto_id: item.produto_id,[m
+[31m-            quantidade: item.quantidade,[m
+[31m-        })),[m
+[31m-    };[m
+[32m+[m
+[32m+[m[32m    if (!carrinho.length) {[m
+[32m+[m[32m        alert("Adicione pelo menos um produto ao carrinho.");[m
+[32m+[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    if (!formaPagamentoAtual) {[m
+[32m+[m[32m        alert("Selecione a forma de pagamento.");[m
+[32m+[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // ========================================================[m
+[32m+[m[32m    // DINHEIRO[m
+[32m+[m[32m    // ========================================================[m
+[32m+[m
+[32m+[m[32m    if (formaPagamentoAtual === "DINHEIRO" && !window.trocoConfirmado) {[m
+[32m+[m[32m        abrirModalTroco();[m
+[32m+[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    vendaEmProcessamento = true;[m
+[32m+[m
+     try {[m
+[32m+[m[32m        const venda = {[m
+[32m+[m[32m            cliente_id: null,[m
+[32m+[m
+[32m+[m[32m            caixa_id: caixaAtual.id ?? caixaAtual.caixa_id,[m
+[32m+[m
+[32m+[m[32m            funcionario_id: funcionarioAtual.id,[m
+[32m+[m
+[32m+[m[32m            desconto: Number(descontoAtual) || 0,[m
+[32m+[m
+[32m+[m[32m            forma_pagamento: formaPagamentoAtual,[m
+[32m+[m
+[32m+[m[32m            itens: carrinho.map((item) => ({[m
+[32m+[m[32m                produto_id: item.produto_id,[m
+[32m+[m
+[32m+[m[32m                quantidade: Number(item.quantidade),[m
+[32m+[m[32m            })),[m
+[32m+[m[32m        };[m
+[32m+[m
+[32m+[m[32m        console.log("Venda enviada:", venda);[m
+[32m+[m
+         const resposta = await fetch("/salesV2", {[m
+             method: "POST",[m
+[32m+[m
+             headers: {[m
+                 "Content-Type": "application/json",[m
+             },[m
+[32m+[m
+             body: JSON.stringify(venda),[m
+         });[m
+ [m
+         const resultado = await resposta.json();[m
+ [m
+         if (!resposta.ok) {[m
+[31m-            alert(resultado.erro || "Erro ao finalizar venda.");[m
+[31m-            return;[m
+[32m+[m[32m            throw new Error(resultado.erro || resultado.error || "Erro ao registrar venda.");[m
+         }[m
+ [m
+[31m-        alert("Venda realizada com sucesso!");[m
+[31m-        await carregarProdutos();[m
+[32m+[m[32m        console.log("Venda registrada:", resultado);[m
+ [m
+[31m-        carrinho = [];[m
+[31m-        valorTotal = 0;[m
+[32m+[m[32m        alert("Venda finalizada com sucesso!");[m
+ [m
+[31m-        atualizarTabela();[m
+[31m-[m
+[31m-        nomeProduto.textContent = "-";[m
+[31m-        codigoProduto.textContent = "-";[m
+[31m-        precoProduto.textContent = "R$ 0,00";[m
+[31m-[m
+[31m-        codigo.value = "";[m
+[31m-        codigo.focus();[m
+[32m+[m[32m        finalizarLimpezaVenda();[m
+     } catch (erro) {[m
+[31m-        console.error(erro);[m
+[31m-        alert("Erro ao conectar ao servidor.");[m
+[32m+[m[32m        console.error("Erro ao finalizar venda:", erro);[m
+[32m+[m
+[32m+[m[32m        alert(`Erro ao finalizar venda:\n${erro.message}`);[m
+[32m+[m[32m    } finally {[m
+[32m+[m[32m        vendaEmProcessamento = false;[m
+     }[m
+ }[m
+[31m-async function abrirCaixa() {[m
+[31m-    try {[m
+[31m-        const resposta = await fetch("/caixas/1/abrir", {[m
+[31m-            method: "POST",[m
+[31m-        });[m
+ [m
+[31m-        const resultado = await resposta.json();[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// LIMPAR VENDA[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction finalizarLimpezaVenda() {[m
+[32m+[m[32m    carrinho = [];[m
+ [m
+[31m-        alert(resultado.mensagem);[m
+[32m+[m[32m    descontoAtual = 0;[m
+ [m
+[31m-        caixaAtual = 1;[m
+[32m+[m[32m    formaPagamentoAtual = null;[m
+ [m
+[31m-        if (statusCaixa) {[m
+[31m-            statusCaixa.textContent = "Caixa: Aberto";[m
+[31m-        }[m
+[31m-    } catch (erro) {[m
+[31m-        console.error(erro);[m
+[31m-        alert("Erro ao abrir caixa.");[m
+[32m+[m[32m    window.trocoConfirmado = false;[m
+[32m+[m
+[32m+[m[32m    window.valorRecebido = 0;[m
+[32m+[m
+[32m+[m[32m    atualizarCarrinho();[m
+[32m+[m
+[32m+[m[32m    fecharModalTroco();[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// CANCELAR VENDA[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction cancelarVenda() {[m
+[32m+[m[32m    if (!carrinho.length) {[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    const confirmar = confirm("Deseja realmente cancelar esta venda?");[m
+[32m+[m
+[32m+[m[32m    if (!confirmar) {[m
+[32m+[m[32m        return;[m
+     }[m
+[32m+[m
+[32m+[m[32m    carrinho = [];[m
+[32m+[m
+[32m+[m[32m    descontoAtual = 0;[m
+[32m+[m
+[32m+[m[32m    formaPagamentoAtual = null;[m
+[32m+[m
+[32m+[m[32m    window.trocoConfirmado = false;[m
+[32m+[m
+[32m+[m[32m    window.valorRecebido = 0;[m
+[32m+[m
+[32m+[m[32m    atualizarCarrinho();[m
+[32m+[m
+[32m+[m[32m    fecharModalTroco();[m
+[32m+[m
+[32m+[m[32m    console.log("Venda cancelada.");[m
+ }[m
+ [m
+[31m-async function fecharCaixa() {[m
+[31m-    try {[m
+[31m-        const resposta = await fetch("/caixas/1/fechar", {[m
+[31m-            method: "POST",[m
+[31m-        });[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// TROCO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-        const resultado = await resposta.json();[m
+[32m+[m[32mfunction abrirModalTroco() {[m
+[32m+[m[32m    const modal = document.getElementById("modalTroco");[m
+ [m
+[31m-        alert(resultado.mensagem);[m
+[32m+[m[32m    if (!modal) {[m
+[32m+[m[32m        console.error("Modal de troco não encontrado.");[m
+ [m
+[31m-        caixaAtual = null;[m
+[32m+[m[32m        // Se o modal não existir, permite finalizar[m
+[32m+[m[32m        // somente quando não for necessário calcular troco.[m
+[32m+[m[32m        return;[m
+[32m+[m[32m    }[m
+ [m
+[31m-        if (statusCaixa) {[m
+[31m-            statusCaixa.textContent = "Caixa: Fechado";[m
+[31m-        }[m
+[31m-    } catch (erro) {[m
+[31m-        console.error(erro);[m
+[31m-        alert("Erro ao fechar caixa.");[m
+[32m+[m[32m    const total = calcularTotalVenda();[m
+[32m+[m
+[32m+[m[32m    const campoTotal = document.getElementById("trocoTotalVenda");[m
+[32m+[m
+[32m+[m[32m    const campoRecebido = document.getElementById("valorRecebido");[m
+[32m+[m
+[32m+[m[32m    const campoTroco = document.getElementById("valorTroco");[m
+[32m+[m
+[32m+[m[32m    if (campoTotal) {[m
+[32m+[m[32m        campoTotal.value = formatarMoeda(total);[m
+     }[m
+[31m-}[m
+[31m-carregarProdutos();[m
+ [m
+[31m-const btnPix = document.getElementById("btnPix");[m
+[31m-const btnDinheiro = document.getElementById("btnDinheiro");[m
+[31m-const btnCartao = document.getElementById("btnCartao");[m
+[31m-const btnCancelar = document.getElementById("btnCancelar");[m
+[31m-const btnFinalizar = document.getElementById("btnFinalizar");[m
+[31m-const btnDesconto = document.getElementById("btnDesconto");[m
+[32m+[m[32m    if (campoRecebido) {[m
+[32m+[m[32m        campoRecebido.value = "";[m
+ [m
+[31m-const btnProduto = document.getElementById("btnProduto");[m
+[31m-const btnBuscar = document.getElementById("btnBuscar");[m
+[31m-const pesquisaProduto = document.getElementById("pesquisaProduto");[m
+[32m+[m[32m        campoRecebido.focus();[m
+ [m
+[31m-const modalProdutos = document.getElementById("modalProdutos");[m
+[31m-const fecharModal = document.getElementById("fecharModal");[m
+[31m-const btnAbrirCaixa = document.getElementById("btnAbrirCaixa");[m
+[31m-const btnFecharCaixa = document.getElementById("btnFecharCaixa");[m
+[32m+[m[32m        campoRecebido.oninput = calcularTroco;[m
+[32m+[m[32m    }[m
+ [m
+[31m-const statusCaixa = document.getElementById("statusCaixa");[m
+[31m-btnProduto.addEventListener("click", () => {[m
+[31m-    carregarProdutosModalV2();[m
+[32m+[m[32m    if (campoTroco) {[m
+[32m+[m[32m        campoTroco.value = "0,00";[m
+[32m+[m[32m    }[m
+ [m
+[31m-    modalProdutosV2.classList.add("ativo");[m
+[32m+[m[32m    modal.style.display = "flex";[m
+ [m
+[31m-    pesquisaProdutoV2.value = "";[m
+[31m-    pesquisaProdutoV2.focus();[m
+[31m-});[m
+[32m+[m[32m    calcularTroco();[m
+[32m+[m[32m}[m
+ [m
+[31m-btnBuscar.addEventListener("click", () => {[m
+[31m-    carregarProdutosModalV2();[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// CALCULAR TROCO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-    modalProdutosV2.classList.add("ativo");[m
+[32m+[m[32mfunction calcularTroco() {[m
+[32m+[m[32m    const total = calcularTotalVenda();[m
+ [m
+[31m-    pesquisaProdutoV2.value = "";[m
+[31m-    pesquisaProdutoV2.focus();[m
+[31m-});[m
+[31m-pesquisaProduto.addEventListener("input", () => {[m
+[31m-    const texto = pesquisaProduto.value.toLowerCase();[m
+[31m-[m
+[31m-    const filtrados = produtos.filter((produto) => {[m
+[31m-        return ([m
+[31m-            produto.nome.toLowerCase().includes(texto) ||[m
+[31m-            (produto.codigo_barras || "").includes(texto) ||[m
+[31m-            (produto.categoria || "").toLowerCase().includes(texto)[m
+[31m-        );[m
+[31m-    });[m
+[32m+[m[32m    const campoRecebido = document.getElementById("valorRecebido");[m
+ [m
+[31m-    carregarProdutosModal(filtrados);[m
+[31m-});[m
+[31m-modalProdutos.addEventListener("click", (e) => {[m
+[31m-    if (e.target === modalProdutos) {[m
+[31m-        modalProdutos.style.display = "none";[m
+[31m-        codigo.focus();[m
+[32m+[m[32m    const campoTroco = document.getElementById("valorTroco");[m
+[32m+[m
+[32m+[m[32m    const mensagem = document.getElementById("mensagemTroco");[m
+[32m+[m
+[32m+[m[32m    if (!campoRecebido) {[m
+[32m+[m[32m        return;[m
+     }[m
+[31m-});[m
+[31m-fecharModal.addEventListener("click", () => {[m
+[31m-    modalProdutos.style.display = "none";[m
+[31m-    codigo.focus();[m
+[31m-});[m
+[31m-btnPix.addEventListener("click", () => {[m
+[31m-    formaPagamento = "PIX";[m
+[31m-    alert("Pagamento: PIX");[m
+[31m-});[m
+ [m
+[31m-btnDinheiro.addEventListener("click", () => {[m
+[31m-    formaPagamento = "DINHEIRO";[m
+[31m-    alert("Pagamento: Dinheiro");[m
+[31m-});[m
+[32m+[m[32m    const recebido = converterMoeda(campoRecebido.value);[m
+ [m
+[31m-btnCartao.addEventListener("click", () => {[m
+[31m-    formaPagamento = "CARTAO";[m
+[31m-    alert("Pagamento: Cartão");[m
+[31m-});[m
+[32m+[m[32m    const troco = recebido - total;[m
+ [m
+[31m-btnCancelar.addEventListener("click", cancelarVenda);[m
+[32m+[m[32m    if (campoTroco) {[m
+[32m+[m[32m        campoTroco.value = formatarMoeda(Math.max(troco, 0));[m
+[32m+[m[32m    }[m
+ [m
+[31m-btnFinalizar.addEventListener("click", finalizarVenda);[m
+[31m-btnDesconto.addEventListener("click", aplicarDesconto);[m
+[32m+[m[32m    if (mensagem) {[m
+[32m+[m[32m        if (recebido < total) {[m
+[32m+[m[32m            mensagem.textContent = `Falta R$ ${formatarMoeda(total - recebido)}`;[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m            mensagem.textContent = "Troco disponível.";[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+ [m
+[31m-if (btnAbrirCaixa) {[m
+[31m-    btnAbrirCaixa.addEventListener("click", abrirCaixa);[m
+[31m-}[m
+[32m+[m[32m    const btnConfirmar = document.getElementById("btnConfirmarTroco");[m
+ [m
+[31m-if (btnFecharCaixa) {[m
+[31m-    btnFecharCaixa.addEventListener("click", fecharCaixa);[m
+[32m+[m[32m    if (btnConfirmar) {[m
+[32m+[m[32m        btnConfirmar.disabled = recebido < total;[m
+[32m+[m[32m    }[m
+ }[m
+[31m-document.addEventListener("keydown", (e) => {[m
+[31m-    if (e.key === "Escape") {[m
+[31m-        modalProdutos.style.display = "none";[m
+[31m-        codigo.focus();[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// CONFIRMAR TROCO[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction confirmarTroco() {[m
+[32m+[m[32m    const total = calcularTotalVenda();[m
+[32m+[m
+[32m+[m[32m    const campoRecebido = document.getElementById("valorRecebido");[m
+[32m+[m
+[32m+[m[32m    if (!campoRecebido) {[m
+[32m+[m[32m        return;[m
+     }[m
+[31m-});[m
+[31m-modalProdutos.addEventListener("click", (e) => {[m
+[31m-    if (e.target === modalProdutos) {[m
+[31m-        modalProdutos.style.display = "none";[m
+[31m-        codigo.focus();[m
+[32m+[m
+[32m+[m[32m    const recebido = converterMoeda(campoRecebido.value);[m
+[32m+[m
+[32m+[m[32m    if (recebido < total) {[m
+[32m+[m[32m        alert("O valor recebido é menor que o valor da venda.");[m
+[32m+[m
+[32m+[m[32m        return;[m
+     }[m
+[31m-});[m
+[31m-// ===============================[m
+[31m-// MODAL PRODUTOS V2[m
+[31m-// ===============================[m
+ [m
+[31m-const modalProdutosV2 = document.getElementById("modalProdutosV2");[m
+[31m-const listaProdutosV2 = document.getElementById("listaProdutosV2");[m
+[31m-const pesquisaProdutoV2 = document.getElementById("pesquisaProdutoV2");[m
+[31m-const fecharModalV2 = document.getElementById("fecharModalV2");[m
+[32m+[m[32m    window.valorRecebido = recebido;[m
+[32m+[m
+[32m+[m[32m    window.trocoConfirmado = true;[m
+ [m
+[31m-function carregarProdutosModalV2(lista = produtos) {[m
+[31m-    listaProdutosV2.innerHTML = "";[m
+[32m+[m[32m    fecharModalTroco();[m
+ [m
+[31m-    lista.forEach((produto) => {[m
+[31m-        const linha = document.createElement("div");[m
+[32m+[m[32m    finalizarVenda();[m
+[32m+[m[32m}[m
+ [m
+[31m-        linha.className = "linha-produto";[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// FECHAR MODAL TROCO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-        linha.innerHTML = `[m
+[31m-            <span>${produto.codigo_barras ?? "-"}</span>[m
+[31m-            <span>${produto.nome}</span>[m
+[31m-            <span>R$ ${Number(produto.preco).toFixed(2)}</span>[m
+[31m-            <span>${produto.estoque}</span>[m
+[31m-        `;[m
+[32m+[m[32mfunction fecharModalTroco() {[m
+[32m+[m[32m    const modal = document.getElementById("modalTroco");[m
+[32m+[m
+[32m+[m[32m    if (modal) {[m
+[32m+[m[32m        modal.style.display = "none";[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// CONFIGURAR BOTÕES DO TROCO[m
+[32m+[m[32m// ============================================================[m
+ [m
+[31m-        linha.addEventListener("dblclick", () => {[m
+[31m-            adicionarProduto(produto);[m
+[32m+[m[32mdocument.addEventListener("DOMContentLoaded", () => {[m
+[32m+[m[32m    const btnConfirmar = document.getElementById("btnConfirmarTroco");[m
+[32m+[m
+[32m+[m[32m    const btnCancelar = document.getElementById("btnCancelarTroco");[m
+[32m+[m
+[32m+[m[32m    if (btnConfirmar) {[m
+[32m+[m[32m        btnConfirmar.addEventListener("click", confirmarTroco);[m
+[32m+[m[32m    }[m
+ [m
+[31m-            modalProdutosV2.classList.remove("ativo");[m
+[32m+[m[32m    if (btnCancelar) {[m
+[32m+[m[32m        btnCancelar.addEventListener("click", () => {[m
+[32m+[m[32m            window.trocoConfirmado = false;[m
+ [m
+[31m-            codigo.focus();[m
+[32m+[m[32m            window.valorRecebido = 0;[m
+[32m+[m
+[32m+[m[32m            fecharModalTroco();[m
+         });[m
+[32m+[m[32m    }[m
+[32m+[m[32m});[m
+ [m
+[31m-        listaProdutosV2.appendChild(linha);[m
+[31m-    });[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// UTILITÁRIOS[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mfunction formatarMoeda(valor) {[m
+[32m+[m[32m    return Number(valor || 0)[m
+[32m+[m[32m        .toFixed(2)[m
+[32m+[m[32m        .replace(".", ",");[m
+ }[m
+[31m-// Fechar no botão X[m
+[31m-fecharModalV2.addEventListener("click", () => {[m
+[31m-    modalProdutosV2.classList.remove("ativo");[m
+[31m-    codigo.focus();[m
+[31m-});[m
+ [m
+[31m-// Fechar clicando fora[m
+[31m-modalProdutosV2.addEventListener("click", (e) => {[m
+[31m-    if (e.target === modalProdutosV2) {[m
+[31m-        modalProdutosV2.classList.remove("ativo");[m
+[31m-        codigo.focus();[m
+[32m+[m[32mfunction converterMoeda(valor) {[m
+[32m+[m[32m    if (typeof valor === "number") {[m
+[32m+[m[32m        return valor;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    if (!valor) {[m
+[32m+[m[32m        return 0;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    let texto = String(valor).trim().replace(/\s/g, "");[m
+[32m+[m
+[32m+[m[32m    // 1.234,56[m
+[32m+[m[32m    if (texto.includes(".") && texto.includes(",")) {[m
+[32m+[m[32m        texto = texto.replace(/\./g, "").replace(",", ".");[m
+     }[m
+[31m-});[m
+ [m
+[31m-// Fechar com ESC[m
+[31m-document.addEventListener("keydown", (e) => {[m
+[31m-    if (e.key === "Escape" && modalProdutosV2.classList.contains("ativo")) {[m
+[31m-        modalProdutosV2.classList.remove("ativo");[m
+[31m-        codigo.focus();[m
+[32m+[m[32m    // 123,45[m
+[32m+[m[32m    else if (texto.includes(",")) {[m
+[32m+[m[32m        texto = texto.replace(",", ".");[m
+     }[m
+[32m+[m
+[32m+[m[32m    const numero = Number(texto);[m
+[32m+[m
+[32m+[m[32m    return Number.isFinite(numero) ? numero : 0;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfunction escaparHTML(texto) {[m
+[32m+[m[32m    return String(texto)[m
+[32m+[m[32m        .replace(/&/g, "&amp;")[m
+[32m+[m[32m        .replace(/</g, "&lt;")[m
+[32m+[m[32m        .replace(/>/g, "&gt;")[m
+[32m+[m[32m        .replace(/"/g, "&quot;")[m
+[32m+[m[32m        .replace(/'/g, "&#039;");[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// EXPOR FUNÇÕES PARA HTML[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mwindow.adicionarProduto = adicionarProduto;[m
+[32m+[m
+[32m+[m[32mwindow.removerProduto = removerProduto;[m
+[32m+[m
+[32m+[m[32mwindow.alterarQuantidade = alterarQuantidade;[m
+[32m+[m
+[32m+[m[32mwindow.finalizarVenda = finalizarVenda;[m
+[32m+[m
+[32m+[m[32mwindow.cancelarVenda = cancelarVenda;[m
+[32m+[m
+[32m+[m[32mwindow.selecionarFuncionario = selecionarFuncionario;[m
+[32m+[m
+[32m+[m[32mwindow.abrirModalFuncionario = abrirModalFuncionario;[m
+[32m+[m
+[32m+[m[32mwindow.fecharModalFuncionario = fecharModalFuncionario;[m
+[32m+[m
+[32m+[m[32mwindow.abrirModalTroco = abrirModalTroco;[m
+[32m+[m
+[32m+[m[32mwindow.fecharModalTroco = fecharModalTroco;[m
+[32m+[m
+[32m+[m[32mwindow.calcularTroco = calcularTroco;[m
+[32m+[m
+[32m+[m[32mwindow.confirmarTroco = confirmarTroco;[m
+[32m+[m
+[32m+[m[32mwindow.definirDesconto = definirDesconto;[m
+[32m+[m
+[32m+[m[32m// ============================================================[m
+[32m+[m[32m// RECUPERAR FUNCIONÁRIO AO CARREGAR[m
+[32m+[m[32m// ============================================================[m
+[32m+[m
+[32m+[m[32mdocument.addEventListener("DOMContentLoaded", () => {[m
+[32m+[m[32m    recuperarFuncionarioSalvo();[m
+ });[m
+[32m+[m
+[32m+[m[32mconsole.log("app.js do PDV carregado sem duplicação.");[m
